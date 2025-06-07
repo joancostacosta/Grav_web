@@ -108,9 +108,9 @@ class GravitySimulator {
         const body = this.findBodyAt(x, y);
         if (body) {
             document.getElementById('statusMouse').textContent = 
-                `Massa: ${body.mass.toFixed(0)} | Velocitat: ${body.vx.toFixed(0)},${body.vy.toFixed(0)}`;
+                `Massa: ${body.mass.toFixed(0)}     Velocitat: x=${body.vx.toFixed(0)} y=${body.vy.toFixed(0)}`;
         } else {
-            document.getElementById('statusMouse').textContent = `Posició: ${x.toFixed(0)},${y.toFixed(0)}`;
+            document.getElementById('statusMouse').textContent = `Posició: x=${x.toFixed(0)} y=${y.toFixed(0)}`;
         }
     }
 
@@ -261,16 +261,16 @@ class GravitySimulator {
 
     updateStatus() {
         document.getElementById('statusTime').textContent = 
-            `Temps: ${this.isRunning ? 'Actiu' : 'Inactiu'}`;
+            `${this.isRunning ? 'Actiu' : 'Inactiu'}`;
         document.getElementById('statusBodies').textContent = 
-            `Cossos: ${this.bodies.length}`;
+            `#Cossos: ${this.bodies.length}`;
     }
 
     updateFPS(currentTime) {
         this.frameCount++;
         if (currentTime - this.fpsTime >= 1000) {
             this.fps = Math.round((this.frameCount * 1000) / (currentTime - this.fpsTime));
-            document.getElementById('fpsCounter').textContent = `FPS: ${this.fps}`;
+            document.getElementById('fpsCounter').textContent = `(${this.fps}FPS)`;
             this.frameCount = 0;
             this.fpsTime = currentTime;
         }

@@ -11,18 +11,17 @@
 
         <div class="sidebar">
 
-            <h3 id="titol">Simulador Gravitacional</h3>
-
-            <div class="instruccions">
-                <h3>Instruccions:</h3>
-                <p><strong>Clic esquerre:</strong> Crear cos</p>
-                <p><strong>Clic dret:</strong> Iniciar/Parar</p>
-                <p><strong>ESC:</strong> Netejar tot</p>
-                <p><strong>Espai:</strong> Un pas</p>
-                <p><strong>Mouse over:</strong> Info del cos</p>
-            </div>
-
-            <div class="parametres">
+            <div class="controls">
+                <h2 id="titol">Simulador Gravitacional</h2>
+                <button class="control-btn" id="playBtn">▶ Iniciar</button>
+                <button class="control-btn clear-btn" id="clearBtn">🗑 Netejar</button>
+                <button class="control-btn step-btn" id="stepBtn">⏯ Un Pas</button>
+                <div>   
+                    <span id="statusTime">Inactiu</span>
+                    <span id="fpsCounter">(0FPS)</span>
+                </div>
+                <div id="statusBodies">#Cossos: 0</div>
+                <div id="statusMouse">Posició: x=0 y=0</div>
                 <div class="param-group">
                     <label>Gravetat:</label>
                     <input type="number" id="paramG" step="0.001" value="0.001">
@@ -38,21 +37,19 @@
                 <div class="param-group">
                     <label>Densitat cossos:</label>
                     <input type="number" id="paramDens" step="0.01" value="1.00">
-                </div>
+                </div>           
             </div>
 
-            <div class="controls">
-                <button class="control-btn" id="playBtn">▶ Iniciar</button>
-                <button class="control-btn clear-btn" id="clearBtn">🗑 Netejar</button>
-                <button class="control-btn" id="stepBtn">⏯ Un Pas</button>
+            <div class="instruccions">
+                <h3>Controls</h3>
+                <p><strong>Clic esquerre:</strong> Crear cos</p>
+                <p><strong>Clic dret:</strong> Iniciar/Parar</p>
+                <p><strong>ESC:</strong> Netejar tot</p>
+                <p><strong>Espai:</strong> Un pas</p>
+                <p><strong>Mouse over:</strong> Info del cos</p>
             </div>
 
-            <div class="estat">
-                <div id="fpsCounter">FPS: 0</div>
-                <div id="statusTime">Temps: Inactiu</div>
-                <div id="statusBodies">#Cossos: 0</div>
-                <div id="statusMouse">Pos: 0,0</div>
-            </div>
+            <a style="font-size: 0.9em; color: #ccc;">&copy; PlaniSoftware 2025</a>
 
         </div>
 
