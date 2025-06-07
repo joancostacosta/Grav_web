@@ -8,31 +8,37 @@
 </head>
 <body>
     <div class="container">
-        <div class="toolbar">
-            <div class="param-group">
-                <label>G:</label>
-                <input type="number" id="paramG" step="0.001" value="0.001">
+        <div class="sidebar">
+            <h3 id="titol">Simulador Gravitacional</h3>
+            <div class="toolbar">
+                <div class="param-group">
+                    <label>Gravetat:</label>
+                    <input type="number" id="paramG" step="0.001" value="0.001">
+                </div>
+                <div class="param-group">
+                    <label>Dimensió espai:</label>
+                    <input type="number" id="paramDim" value="1000">
+                </div>
+                <div class="param-group">
+                    <label>Massa Màx.:</label>
+                    <input type="number" id="paramMassa" value="10000">
+                </div>
+                <div class="param-group">
+                    <label>Densitat cossos:</label>
+                    <input type="number" id="paramDens" step="0.01" value="1.00">
+                </div>
+                <button class="control-btn" id="playBtn">▶ Iniciar</button>
+                <button class="control-btn clear-btn" id="clearBtn">🗑 Netejar</button>
+                <button class="control-btn" id="stepBtn">⏯ Un Pas</button>
             </div>
-            <div class="param-group">
-                <label>Dim:</label>
-                <input type="number" id="paramDim" value="1000">
-            </div>
-            <div class="param-group">
-                <label>Massa Max:</label>
-                <input type="number" id="paramMassa" value="10000">
-            </div>
-            <div class="param-group">
-                <label>Densitat:</label>
-                <input type="number" id="paramDens" step="0.01" value="1.00">
-            </div>
-            <button class="control-btn" id="playBtn">▶ Iniciar</button>
-            <button class="control-btn clear-btn" id="clearBtn">🗑 Netejar</button>
-            <button class="control-btn" id="stepBtn">⏯ Un Pas</button>
-        </div>
 
-        <div class="canvas-container">
-            <canvas id="gravCanvas"></canvas>
-            <div class="fps-counter" id="fpsCounter">FPS: 0</div>
+            <div class="status">
+                <div id="fpsCounter">FPS: 0</div>
+                <div id="statusTime">Temps: Inactiu</div>
+                <div id="statusBodies">#Cossos: 0</div>
+                <div id="statusMouse">Pos: 0,0</div>
+            </div>
+
             <div class="instructions">
                 <h3>Instruccions:</h3>
                 <p><strong>Clic esquerre:</strong> Crear cos</p>
@@ -43,12 +49,8 @@
             </div>
         </div>
 
-        <div class="status-bar">
-            <div class="status-info">
-                <span id="statusTime">Temps: Inactiu</span>
-                <span id="statusBodies">Cossos: 0</span>
-            </div>
-            <div id="statusMouse">Posició del ratolí</div>
+        <div class="canvas-container">
+            <canvas id="gravCanvas"></canvas>
         </div>
     </div>
 

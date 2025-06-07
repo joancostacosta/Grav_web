@@ -108,9 +108,9 @@ class GravitySimulator {
         const body = this.findBodyAt(x, y);
         if (body) {
             document.getElementById('statusMouse').textContent = 
-                `Massa: ${body.mass.toFixed(0)} | Pos: ${x.toFixed(0)},${y.toFixed(0)} | Vel: ${body.vx.toFixed(1)},${body.vy.toFixed(1)}`;
+                `Massa: ${body.mass.toFixed(0)} | Velocitat: ${body.vx.toFixed(0)},${body.vy.toFixed(0)}`;
         } else {
-            document.getElementById('statusMouse').textContent = `Pos: ${x.toFixed(0)},${y.toFixed(0)}`;
+            document.getElementById('statusMouse').textContent = `Posició: ${x.toFixed(0)},${y.toFixed(0)}`;
         }
     }
 

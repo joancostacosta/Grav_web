@@ -9,21 +9,22 @@ body {
     background: linear-gradient(135deg, #1e3c72, #2a5298);
     color: white;
     overflow: hidden;
+    height: 100vh; /* Propiedad añadida para ocupar el 100% de la altura */
 }
 
 .container {
     display: flex;
-    flex-direction: column;
-    height: 100vh;
+    flex-direction: row;
+    height: 100%; /* Propiedad añadida para ocupar el 100% de la altura */
 }
 
 .toolbar {
     background: rgba(0, 0, 0, 0.8);
     padding: 10px;
     display: flex;
-    align-items: center;
+    flex-flow: column nowrap;
+    align-items: stretch;
     gap: 15px;
-    flex-wrap: wrap;
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -31,6 +32,7 @@ body {
 .param-group {
     display: flex;
     align-items: center;
+    justify-content: center;    
     gap: 5px;
     background: rgba(255, 255, 255, 0.1);
     padding: 5px 10px;
@@ -41,6 +43,8 @@ body {
 .param-group label {
     font-size: 12px;
     font-weight: 500;
+    flex: 0 0 50%; /* Ocupa un 30% de l'ample disponible */
+    text-align: right;
 }
 
 .param-group input {
@@ -51,6 +55,7 @@ body {
     color: white;
     width: 60px;
     font-size: 11px;
+    flex: 1; /* Ocupa la resta de l'ample disponible */
 }
 
 .param-group input:focus {
@@ -86,46 +91,54 @@ body {
     box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
 }
 
+.sidebar {
+    width: 250px; /* ajustar ancho según convenga */
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    box-sizing: border-box;
+    justify-content: space-evenly
+    /* Opcional: fondo o borde para distinguir la barra lateral */
+}
+
 .canvas-container {
     flex: 1;
     position: relative;
-    background: radial-gradient(circle at center, #0f0f23, #000);
+    display: flex; /* afegit per centrar el canvas */
+    justify-content: center; /* aliniació horitzontal */
+    align-items: center; /* aliniació vertical */
+    background: #444; /* color dels marges diferent del fons de gravCanvas */
 }
 
 canvas {
     display: block;
-    width: 100%;
-    height: 100%;
+    width: 100%;  /* modificat per evitar que ompli tot el container */
+    height: 100%; /* modificat per evitar que ompli tot el container */
+    background: radial-gradient(circle at center, #0f0f23, #000); /* fons de simulació per gravCanvas */
     cursor: crosshair;
 }
 
-.status-bar {
-    background: rgba(0, 0, 0, 0.9);
-    padding: 8px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
 
-.status-info {
-    display: flex;
-    gap: 20px;
-}
-
-.instructions {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(0, 0, 0, 0.8);
+.status {
+    position: static;
+    margin-top: 1rem;
     padding: 15px;
     border-radius: 10px;
     font-size: 12px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    max-width: 250px;
+    max-width: 100%;
+}
+
+.instructions {
+    position: static;
+    margin-top: 1rem;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    max-width: 100%;
 }
 
 .instructions h3 {
@@ -138,13 +151,16 @@ canvas {
     opacity: 0.9;
 }
 
-.fps-counter {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 11px;
-    font-family: monospace;
+#fpsCounter, #statusTime, #statusBodies, #statusMouse {
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit; /* Igualar amb els labels del toolbar */
+}
+
+#titol {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #ffffff;
 }
