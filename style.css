@@ -18,17 +18,6 @@ body {
     height: 100%; /* Propiedad añadida para ocupar el 100% de la altura */
 }
 
-.toolbar {
-    background: rgba(0, 0, 0, 0.8);
-    padding: 10px;
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: stretch;
-    gap: 15px;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 .param-group {
     display: flex;
     align-items: center;
@@ -97,7 +86,7 @@ body {
     flex-direction: column;
     padding: 1rem;
     box-sizing: border-box;
-    justify-content: space-evenly
+    justify-content: space-between; /* Espacio entre los elementos */
     /* Opcional: fondo o borde para distinguir la barra lateral */
 }
 
@@ -118,35 +107,31 @@ canvas {
     cursor: crosshair;
 }
 
+#titol {
+    font-size: 24px;
+    font-weight: bold;
+    /*margin-bottom: 20px;*/
+    text-align: center;
+    color: #ffffff;
+}
 
-.status {
+.instruccions, .estat {
     position: static;
-    margin-top: 1rem;
     padding: 15px;
     border-radius: 10px;
     font-size: 12px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     max-width: 100%;
+    text-align: center;
 }
 
-.instructions {
-    position: static;
-    margin-top: 1rem;
-    padding: 15px;
-    border-radius: 10px;
-    font-size: 12px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    max-width: 100%;
-}
-
-.instructions h3 {
+.instruccions h3 {
     margin-bottom: 8px;
     color: #4CAF50;
 }
 
-.instructions p {
+.instruccions p {
     margin: 4px 0;
     opacity: 0.9;
 }
@@ -157,10 +142,16 @@ canvas {
     font-family: inherit; /* Igualar amb els labels del toolbar */
 }
 
-#titol {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #ffffff;
+
+.parametres, .controls {
+    /*background: rgba(0, 0, 0, 0.8);*/
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+    gap: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /*border-bottom: 1px solid rgba(255, 255, 255, 0.1);*/
 }
