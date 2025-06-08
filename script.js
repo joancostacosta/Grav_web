@@ -207,6 +207,52 @@ class GravitySimulator {
         return `rgb(${r}, ${g}, ${b})`;
     }
 
+    mergeBodies() {
+        let merged = false;
+        for (let i = 0; i < this.bodies.length; i++) {
+            for (let j = i + 1; j < this.bodies.length; j++) {
+                const body1 = this.bodies[i];
+                const body2 = this.bodies[j];
+                const dx = body1.x - body2.x;
+                const dy = body1.y - body2.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < (body1.radius + body2.radius)) {
+                    // Conservación de masa y momento lineal
+                    const totalMass = body1.mass + body2.mass;
+                    // Posición del centro de masas
+                    const newX = (body1.x * body1.mass + body2.x * body2.mass) / totalMass;
+                    const newY = (body1.y * body1.mass + body2.y * body2.mass) / totalMass;
+                    // Velocidad que conserva el momento lineal
+                    const newVx = (body1.vx * body1.mass + body2.vx * body2.mass) / totalMass;
+                    const newVy = (body1.vy * body1.mass + body2.vy * body2.mass) / totalMass;
+                    
+                    // Eliminar los dos cuerpos y añadir el fusionado
+                    this.bodies.splice(j, 1);
+                    this.bodies.splice(i, 1);
+                    this.bodies.push({
+                        mass: totalMass,
+                        x: newX,
+                        y: newY,
+                        vx: newVx,
+                        vy: newVy,
+                        radius: this.calculateRadius(totalMass)
+                    });
+                    
+                    merged = true;
+                    break;
+                }
+            }
+            if (merged) break;
+        }
+        
+        if (merged) {
+            this.updateStatus();
+            // Comprobar nuevas colisiones recursivamente
+            this.mergeBodies();
+        }
+    }
+
     draw() {
         const rect = this.canvas.getBoundingClientRect();
         this.ctx.clearRect(0, 0, rect.width, rect.height);
@@ -301,6 +347,7 @@ class GravitySimulator {
         document.getElementById('playBtn').classList.remove('active');
         this.updateVelocities();
         this.moveBodies();
+        this.mergeBodies();  // Añadir comprobación de fusiones
         this.updateStatus();
     }
 
@@ -318,6 +365,7 @@ class GravitySimulator {
         if (this.isRunning) {
             this.updateVelocities();
             this.moveBodies();
+            this.mergeBodies();  // Añadir comprobació de fusiones
         }
         
         this.draw();
