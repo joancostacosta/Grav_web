@@ -85,6 +85,10 @@ class GravitySimulator {
                 output.value = densVals[index];
             }
             this.density = parseFloat(densVals[index]);
+            // Recalcular el radi de tots els cossos segons la nova densitat
+            this.bodies.forEach(body => {
+                body.radius = this.calculateRadius(body.mass);
+            });
         });
 
         // Canvas events
