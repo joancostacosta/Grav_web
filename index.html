@@ -20,24 +20,24 @@
                     <span id="statusTime">Inactiu</span>
                     <span id="fpsCounter">(0FPS)</span>
                 </div>
-                <div id="statusBodies">#Cossos: 0</div>
+                <div id="statusBodies">#Cossos: 0 | Massa total: 0</div>
                 <div id="statusMouse">Posició: x=0 y=0</div>
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;" title="Intensitat de la gravetat">
                     <label for="paramG" style="margin: 0;">Intensitat gravetat</label>
                     <input type="range" id="paramG" min="0" max="3" step="1" value="1">
                     <output id="paramGValue" style="margin: 0;">0.010</output>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;" title="Dimensió de l'espai de simulació">
                     <label for="paramDim" style="margin: 0;">Dimensió espai</label>
                     <input type="range" id="paramDim" min="0" max="4" step="1" value="1">
                     <output id="paramDimValue" style="margin: 0;">1000</output>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;" title="Massa màxima que pot tenir un cos">
                     <label for="paramMassa" style="margin: 0;">Massa màx.</label>
                     <input type="range" id="paramMassa" min="0" max="3" step="1" value="1">
                     <output id="paramMassaValue" style="margin: 0;">10000</output>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;" title="Densitat dels cossos, afecta a la mida">
                     <label for="paramDens" style="margin: 0;">Densitat cossos</label>
                     <input type="range" id="paramDens" min="0" max="4" step="1" value="2">
                     <output id="paramDensValue" style="margin: 0;">1.00</output>

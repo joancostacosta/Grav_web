@@ -399,10 +399,11 @@ class GravitySimulator {
 
     
     updateStatus() {
+        const totalMass = this.bodies.reduce((sum, body) => sum + body.mass, 0);
         document.getElementById('statusTime').textContent = 
             `${this.isRunning ? 'Actiu' : 'Inactiu'}`;
         document.getElementById('statusBodies').textContent = 
-            `#Cossos: ${this.bodies.length}`;
+            `#Cossos: ${this.bodies.length} | Massa total: ${totalMass.toFixed(0)}`;
     }
 
     updateFPS(currentTime) {
