@@ -126,7 +126,7 @@ class GravitySimulator {
         const body = this.findBodyAt(x, y);
         if (body) {
             document.getElementById('statusMouse').textContent = 
-                `Massa: ${body.mass.toFixed(0)}     Velocitat: x=${body.vx.toFixed(0)} y=${body.vy.toFixed(0)}`;
+                `Massa: ${body.mass.toFixed(0)}     Velocitat: x=${body.vx.toFixed(2)} y=${body.vy.toFixed(2)}`;
         } else {
             document.getElementById('statusMouse').textContent = `Posició: x=${x.toFixed(0)} y=${y.toFixed(0)}`;
         }
@@ -220,14 +220,11 @@ class GravitySimulator {
                 if (distance < (body1.radius + body2.radius)) {
                     // Conservación de masa y momento lineal
                     const totalMass = body1.mass + body2.mass;
-                    // Posición del centro de masas
                     const newX = (body1.x * body1.mass + body2.x * body2.mass) / totalMass;
                     const newY = (body1.y * body1.mass + body2.y * body2.mass) / totalMass;
-                    // Velocidad que conserva el momento lineal
                     const newVx = (body1.vx * body1.mass + body2.vx * body2.mass) / totalMass;
                     const newVy = (body1.vy * body1.mass + body2.vy * body2.mass) / totalMass;
                     
-                    // Eliminar los dos cuerpos y añadir el fusionado
                     this.bodies.splice(j, 1);
                     this.bodies.splice(i, 1);
                     this.bodies.push({
@@ -248,10 +245,94 @@ class GravitySimulator {
         
         if (merged) {
             this.updateStatus();
-            // Comprobar nuevas colisiones recursivamente
             this.mergeBodies();
         }
     }
+
+    /**
+     * Comprova si algun cos ha de explotar i ho gestiona.
+     */
+    handleExplosions() {
+        for (let i = this.bodies.length - 1; i >= 0; i--) {
+            if (this.bodies[i].mass > this.maxMass) {
+                this.explodeBody(i);
+            }
+        }
+    }
+
+    /**
+     * Lògica de l'explosió d'un cos.
+     * @param {number} index - L'índex del cos a explotar a l'array this.bodies.
+     */
+    explodeBody(index) {
+        const body = this.bodies[index];
+        const N = Math.floor(Math.random() * 5) + 3; // Genera entre 3 i 7 fragments
+
+        // --- 1. Distribució de la massa ---
+        let masses = [];
+        let retries = 0;
+        do {
+            masses = [];
+            const proportions = Array.from({ length: N }, () => Math.random());
+            const totalProportion = proportions.reduce((sum, val) => sum + val, 0);
+            masses = proportions.map(p => (p / totalProportion) * body.mass);
+            retries++;
+        } while (masses.some(m => m <= 1 || m >= this.maxMass) && retries < 50);
+
+        // Si després de varios intents no es troba una distribució vàlida, no explota
+        if (masses.some(m => m <= 1 || m >= this.maxMass)) return;
+
+        // --- 2. Conservació del moment lineal ---
+        // El moment total es conserva. L'explosió afegeix moment als fragments
+        // en el sistema de referència del centre de masses (CM), on la suma de moments és zero.
+        
+        // Constant que defineix la "força" de l'impuls de l'explosió.
+        const explosionImpulse = body.mass * 0.5;
+        let cmMomenta = [];
+        let cmMomentumSumX = 0;
+        let cmMomentumSumY = 0;
+
+        for (let i = 0; i < N - 1; i++) {
+            // "Cossos amb menys massa han de sortir disparats amb major velocitat"
+            // p = m*v => v = p/m. Per a v gran amb m petita, fem que el mòdul del moment (p) sigui constant.
+            const momentumMagnitude = explosionImpulse / N;
+            const angle = Math.random() * 2 * Math.PI;
+            
+            const px = Math.cos(angle) * momentumMagnitude;
+            const py = Math.sin(angle) * momentumMagnitude;
+
+            cmMomenta.push({ px, py });
+            cmMomentumSumX += px;
+            cmMomentumSumY += py;
+        }
+
+        // L'últim fragment equilibra el moment per a que la suma total al CM sigui zero.
+        cmMomenta.push({ px: -cmMomentumSumX, py: -cmMomentumSumY });
+
+        // --- 3. Creació dels nous cossos ---
+        this.bodies.splice(index, 1); // Elimina el cos original
+
+        for (let i = 0; i < N; i++) {
+            const m = masses[i];
+            const p_cm_x = cmMomenta[i].px;
+            const p_cm_y = cmMomenta[i].py;
+
+            // Velocitat final = velocitat original del CM + velocitat de l'explosió
+            const vx = body.vx + p_cm_x / m;
+            const vy = body.vy + p_cm_y / m;
+
+            // Crea el nou cos amb un petit desplaçament per evitar la fusió immediata
+            const offsetAngle = (i / N) * 2 * Math.PI;
+            const offsetDist = body.radius > 1 ? body.radius : 2.0; // Desplaça fora del radi original
+            const x = body.x + offsetDist * Math.cos(offsetAngle);
+            const y = body.y + offsetDist * Math.sin(offsetAngle);
+            
+            this.createBody(m, x, y, vx, vy);
+        }
+
+        this.updateStatus();
+    }
+
 
     draw() {
         const rect = this.canvas.getBoundingClientRect();
@@ -347,7 +428,8 @@ class GravitySimulator {
         document.getElementById('playBtn').classList.remove('active');
         this.updateVelocities();
         this.moveBodies();
-        this.mergeBodies();  // Añadir comprobación de fusiones
+        this.mergeBodies();
+        this.handleExplosions(); // Comprova explosions també en el pas manual
         this.updateStatus();
     }
 
@@ -365,7 +447,8 @@ class GravitySimulator {
         if (this.isRunning) {
             this.updateVelocities();
             this.moveBodies();
-            this.mergeBodies();  // Añadir comprobació de fusiones
+            this.mergeBodies();
+            this.handleExplosions(); // NOU: Comprovar explosions a cada frame
         }
         
         this.draw();
