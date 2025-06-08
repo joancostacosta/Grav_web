@@ -22,22 +22,26 @@
                 </div>
                 <div id="statusBodies">#Cossos: 0</div>
                 <div id="statusMouse">Posició: x=0 y=0</div>
-                <div class="param-group">
-                    <label>Gravetat:</label>
-                    <input type="number" id="paramG" step="0.001" value="0.001">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label for="paramG" style="margin: 0;">Intensitat gravetat</label>
+                    <input type="range" id="paramG" min="0" max="3" step="1" value="1">
+                    <output id="paramGValue" style="margin: 0;">0.010</output>
                 </div>
-                <div class="param-group">
-                    <label>Dimensió espai:</label>
-                    <input type="number" id="paramDim" value="1000">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label for="paramDim" style="margin: 0;">Dimensió espai</label>
+                    <input type="range" id="paramDim" min="0" max="4" step="1" value="1">
+                    <output id="paramDimValue" style="margin: 0;">1000</output>
                 </div>
-                <div class="param-group">
-                    <label>Massa Màx.:</label>
-                    <input type="number" id="paramMassa" value="10000">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label for="paramMassa" style="margin: 0;">Massa màx.</label>
+                    <input type="range" id="paramMassa" min="0" max="3" step="1" value="1">
+                    <output id="paramMassaValue" style="margin: 0;">10000</output>
                 </div>
-                <div class="param-group">
-                    <label>Densitat cossos:</label>
-                    <input type="number" id="paramDens" step="0.01" value="1.00">
-                </div>           
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label for="paramDens" style="margin: 0;">Densitat cossos</label>
+                    <input type="range" id="paramDens" min="0" max="4" step="1" value="2">
+                    <output id="paramDensValue" style="margin: 0;">1.00</output>
+                </div>         
             </div>
 
             <div class="instruccions">

@@ -20,7 +20,6 @@ class GravitySimulator {
         
         this.setupCanvas();
         this.setupEventListeners();
-        this.updateParameters();
         this.animate();
     }
 
@@ -44,29 +43,48 @@ class GravitySimulator {
         document.getElementById('clearBtn').addEventListener('click', () => this.clearAll());
         document.getElementById('stepBtn').addEventListener('click', () => this.stepSimulation());
         
-        // Parameter inputs
-        document.getElementById('paramG').addEventListener('change', (e) => {
-            this.G = Math.max(-1, Math.min(1, parseFloat(e.target.value) || this.G));
-            e.target.value = this.G;
-        });
-        
-        document.getElementById('paramDim').addEventListener('change', (e) => {
-            const newDim = Math.max(100, parseInt(e.target.value) || this.dimSpace);
-            if (newDim !== this.dimSpace) {
-                this.dimSpace = newDim;
-                this.clearAll();
+        // gestió paramG
+        const gVals = ['0.001','0.010','0.100','1.000'];
+        document.getElementById('paramG').addEventListener('input', (e) => {
+            const index = parseInt(e.target.value);
+            const output = document.getElementById('paramGValue');
+            if (output) {
+                output.value = gVals[index];
             }
-            e.target.value = this.dimSpace;
+            this.G = parseFloat(gVals[index]);
         });
         
-        document.getElementById('paramMassa').addEventListener('change', (e) => {
-            this.maxMass = Math.max(100, parseInt(e.target.value) || this.maxMass);
-            e.target.value = this.maxMass;
+        // gestió paramDim
+        const dVals = ['500','1000','1500','2000','2500'];
+        document.getElementById('paramDim').addEventListener('input', (e) => {
+            const index = parseInt(e.target.value);
+            const output = document.getElementById('paramDimValue');
+            if (output) {
+                output.value = dVals[index];
+            }
+            this.dimSpace = parseInt(dVals[index], 10);
         });
         
-        document.getElementById('paramDens').addEventListener('change', (e) => {
-            this.density = Math.max(0.01, parseFloat(e.target.value) || this.density);
-            e.target.value = this.density.toFixed(2);
+        // gestió paramMassa:
+        const massVals = ["5000", "10000", "20000", "40000"];
+        document.getElementById('paramMassa').addEventListener('input', (e) => {
+            const index = parseInt(e.target.value);
+            const output = document.getElementById('paramMassaValue');
+            if (output) {
+                output.value = massVals[index];
+            }
+            this.maxMass = parseInt(massVals[index], 10);
+        });
+        
+        // gestió paramDens:
+        const densVals = ["0.01", "0.10", "1.00", "10.00", "100.00"];
+        document.getElementById('paramDens').addEventListener('input', (e) => {
+            const index = parseInt(e.target.value);
+            const output = document.getElementById('paramDensValue');
+            if (output) {
+                output.value = densVals[index];
+            }
+            this.density = parseFloat(densVals[index]);
         });
 
         // Canvas events
@@ -252,13 +270,7 @@ class GravitySimulator {
         }
     }
 
-    updateParameters() {
-        document.getElementById('paramG').value = this.G;
-        document.getElementById('paramDim').value = this.dimSpace;
-        document.getElementById('paramMassa').value = this.maxMass;
-        document.getElementById('paramDens').value = this.density.toFixed(2);
-    }
-
+    
     updateStatus() {
         document.getElementById('statusTime').textContent = 
             `${this.isRunning ? 'Actiu' : 'Inactiu'}`;

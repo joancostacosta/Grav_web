@@ -19,41 +19,6 @@ body {
     height: 100%; /* Propiedad añadida para ocupar el 100% de la altura */
 }
 
-.param-group {
-    display: flex;
-    align-items: center;
-    justify-content: center;    
-    gap: 5px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 5px 10px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.param-group label {
-    font-size: 12px;
-    font-weight: 500;
-    flex: 0 0 50%; /* Ocupa un 50% de l'ample disponible */
-    text-align: right;
-}
-
-.param-group input {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 15px;
-    padding: 4px 8px;
-    color: white;
-    width: 60px;
-    font-size: 11px;
-    flex: 1; /* Ocupa la resta de l'ample disponible */
-}
-
-.param-group input:focus {
-    outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
-}
-
 .control-btn {
     background: linear-gradient(45deg, #4CAF50, #45a049);
     border: none;
