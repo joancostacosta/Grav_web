@@ -8,7 +8,10 @@ class GravitySimulator {
         
         // Paràmetres
         this.G = 0.001;
-        this.dimSpace = 1000;
+        // S'elimina el valor fix de dimSpace i s'assigna el mínim entre amplada i alçada del container
+        const container = document.querySelector('.canvas-container');
+        const rect = container.getBoundingClientRect();
+        this.dimSpace = Math.min(rect.width, rect.height);
         this.maxMass = 10000;
         this.density = 1.0;
         
@@ -55,17 +58,6 @@ class GravitySimulator {
                 output.value = gVals[index];
             }
             this.G = parseFloat(gVals[index]);
-        });
-        
-        // gestió paramDim
-        const dVals = ['500','1000','1500','2000','2500'];
-        document.getElementById('paramDim').addEventListener('input', (e) => {
-            const index = parseInt(e.target.value);
-            const output = document.getElementById('paramDimValue');
-            if (output) {
-                output.value = dVals[index];
-            }
-            this.dimSpace = parseInt(dVals[index], 10);
         });
         
         // gestió paramMassa:
