@@ -24,13 +24,16 @@ class GravitySimulator {
     }
 
     setupCanvas() {
+        // Usar el contenedor para obtener dimensiones
+        const container = document.querySelector('.canvas-container');
         const resizeCanvas = () => {
-            const rect = this.canvas.getBoundingClientRect();
-            this.canvas.width = rect.width * window.devicePixelRatio;
-            this.canvas.height = rect.height * window.devicePixelRatio;
+            const rect = container.getBoundingClientRect();
+            const side = Math.min(rect.width, rect.height);
+            this.canvas.width = side * window.devicePixelRatio;
+            this.canvas.height = side * window.devicePixelRatio;
             this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-            this.canvas.style.width = rect.width + 'px';
-            this.canvas.style.height = rect.height + 'px';
+            this.canvas.style.width = side + 'px';
+            this.canvas.style.height = side + 'px';
         };
         
         resizeCanvas();
@@ -159,10 +162,18 @@ class GravitySimulator {
         return Math.pow(mass / (Math.PI * this.density), 1/3);
     }
 
+    // Nuevo método auxiliar para calcular la diferencia toroidal
+    getWrappedDelta(delta) {
+        if (Math.abs(delta) > this.dimSpace / 2) {
+            return delta > 0 ? delta - this.dimSpace : delta + this.dimSpace;
+        }
+        return delta;
+    }
+
     findBodyAt(x, y) {
         for (let body of this.bodies) {
-            const dx = x - body.x;
-            const dy = y - body.y;
+            const dx = this.getWrappedDelta(x - body.x);
+            const dy = this.getWrappedDelta(y - body.y);
             const distance = Math.sqrt(dx * dx + dy * dy);
             if (distance <= body.radius) {
                 return body;
@@ -178,8 +189,8 @@ class GravitySimulator {
             for (let j = 0; j < this.bodies.length; j++) {
                 if (i === j) continue;
                 
-                const dx = this.bodies[j].x - this.bodies[i].x;
-                const dy = this.bodies[j].y - this.bodies[i].y;
+                const dx = this.getWrappedDelta(this.bodies[j].x - this.bodies[i].x);
+                const dy = this.getWrappedDelta(this.bodies[j].y - this.bodies[i].y);
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance > 0) {
@@ -223,12 +234,12 @@ class GravitySimulator {
             for (let j = i + 1; j < this.bodies.length; j++) {
                 const body1 = this.bodies[i];
                 const body2 = this.bodies[j];
-                const dx = body1.x - body2.x;
-                const dy = body1.y - body2.y;
+                const dx = this.getWrappedDelta(body1.x - body2.x);
+                const dy = this.getWrappedDelta(body1.y - body2.y);
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance < (body1.radius + body2.radius)) {
-                    // Conservación de masa y momento lineal
+                    // Conservación de massa y momento lineal
                     const totalMass = body1.mass + body2.mass;
                     const newX = (body1.x * body1.mass + body2.x * body2.mass) / totalMass;
                     const newY = (body1.y * body1.mass + body2.y * body2.mass) / totalMass;
@@ -278,6 +289,10 @@ class GravitySimulator {
         const body = this.bodies[index]; // Cos a explotar
         const N = Math.floor(Math.random() * 11) + 10; // Genera entre 10 i 20 fragments
 
+        // Convertir 1 unitat de massa en energia cinètica
+        const explosionEnergy = 1 * this.maxMass; // Energia total d'explosió
+        const distributedMass = body.mass - 1; // Massa a repartir entre fragments
+
         // Dividir el cercle en N sectors amb angles aleatoris
         let randoms = [];
         let total = 0;
@@ -289,9 +304,8 @@ class GravitySimulator {
         }
         const sectors = randoms.map(r => (r / total) * (2 * Math.PI));
 
-        // Calcular la magnitud del moment per fragment (moment lineal = massa · velocitat)
-        const origSpeed = Math.sqrt(body.vx * body.vx + body.vy * body.vy);
-        const pPerFragment = (body.mass * origSpeed) / N;
+        // Energia cinètica repartida equitativament per fragment
+        const energyPerFragment = explosionEnergy / N;
 
         // Elimina el cos original
         this.bodies.splice(index, 1);
@@ -301,19 +315,18 @@ class GravitySimulator {
         for (let i = 0; i < N; i++) {
             const theta = sectors[i]; // Angle del sector
             const bisector = currentAngle + theta / 2; // Bisectriu del sector
-            // La massa del fragment és la fracció de la massa original segons l'angle del sector
-            const fragMass = (theta / (2 * Math.PI)) * body.mass;
-            // Calcular la velocitat de manera que: massa_fragment * velocitat = pPerFragment
-            const fragSpeed = fragMass > 0 ? pPerFragment / fragMass : 0;
+            // La massa del fragment és la fracció de la massa distribuïda segons l'angle
+            const fragMass = (theta / (2 * Math.PI)) * distributedMass;
+            // Determinar la velocitat d'escapament: KE = 1/2 * m * v²  => v = sqrt(2*KE/m)
+            const fragSpeed = fragMass > 0 ? Math.sqrt((2 * energyPerFragment) / fragMass) : 0;
             //console.log(`Fragment ${i + 1}: massa=${fragMass.toFixed(2)}, velocitat=${fragSpeed.toFixed(2)}`);
-            // Posicionar el fragment sobre el contorn del cos original més un radi addicional en funció de la velocitat
-            // per evitar superposició amb el cos original
-            const offsetDist = body.radius * 3 + fragSpeed; // triple del radi++ per evitar superposició
+            // Posicionar el fragment amb un offset per evitar superposició
+            const offsetDist = body.radius * 3 + fragSpeed;
             const fragX = body.x + offsetDist * Math.cos(bisector);
             const fragY = body.y + offsetDist * Math.sin(bisector);
-            // La velocitat és radial cap a fora
-            const fragVx = fragSpeed * Math.cos(bisector);
-            const fragVy = fragSpeed * Math.sin(bisector);
+            // La velocitat és radial cap a fora afegint la velocitat original del cos
+            const fragVx = body.vx + fragSpeed * Math.cos(bisector);
+            const fragVy = body.vy + fragSpeed * Math.sin(bisector);
             this.createBody(fragMass, fragX, fragY, fragVx, fragVy);
             currentAngle += theta;
         }
