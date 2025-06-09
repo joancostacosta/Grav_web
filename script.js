@@ -137,6 +137,12 @@ class GravitySimulator {
     }
 
     createBody(mass, x, y, vx, vy) {
+        // Validar paràmetres
+        if (mass <= 0 || x < 0 || x >= this.dimSpace || y < 0 || y >= this.dimSpace) {
+            console.warn('Paràmetres invàlids per crear un cos:', { mass, x, y, vx, vy });
+            return;
+        };
+
         const radius = this.calculateRadius(mass);
         this.bodies.push({
             mass: mass,
@@ -269,71 +275,48 @@ class GravitySimulator {
      * @param {number} index - L'índex del cos a explotar a l'array this.bodies.
      */
     explodeBody(index) {
-        const body = this.bodies[index];
-        const N = Math.floor(Math.random() * 5) + 3; // Genera entre 3 i 7 fragments
+        const body = this.bodies[index]; // Cos a explotar
+        const N = Math.floor(Math.random() * 11) + 10; // Genera entre 10 i 20 fragments
 
-        // --- 1. Distribució de la massa ---
-        let masses = [];
-        let retries = 0;
-        do {
-            masses = [];
-            const proportions = Array.from({ length: N }, () => Math.random());
-            const totalProportion = proportions.reduce((sum, val) => sum + val, 0);
-            masses = proportions.map(p => (p / totalProportion) * body.mass);
-            retries++;
-        } while (masses.some(m => m <= 1 || m >= this.maxMass) && retries < 50);
-
-        // Si després de varios intents no es troba una distribució vàlida, no explota
-        if (masses.some(m => m <= 1 || m >= this.maxMass)) return;
-
-        // --- 2. Conservació del moment lineal ---
-        // El moment total es conserva. L'explosió afegeix moment als fragments
-        // en el sistema de referència del centre de masses (CM), on la suma de moments és zero.
-        
-        // Constant que defineix la "força" de l'impuls de l'explosió.
-        const explosionImpulse = body.mass * 0.5;
-        let cmMomenta = [];
-        let cmMomentumSumX = 0;
-        let cmMomentumSumY = 0;
-
-        for (let i = 0; i < N - 1; i++) {
-            // "Cossos amb menys massa han de sortir disparats amb major velocitat"
-            // p = m*v => v = p/m. Per a v gran amb m petita, fem que el mòdul del moment (p) sigui constant.
-            const momentumMagnitude = explosionImpulse / N;
-            const angle = Math.random() * 2 * Math.PI;
-            
-            const px = Math.cos(angle) * momentumMagnitude;
-            const py = Math.sin(angle) * momentumMagnitude;
-
-            cmMomenta.push({ px, py });
-            cmMomentumSumX += px;
-            cmMomentumSumY += py;
-        }
-
-        // L'últim fragment equilibra el moment per a que la suma total al CM sigui zero.
-        cmMomenta.push({ px: -cmMomentumSumX, py: -cmMomentumSumY });
-
-        // --- 3. Creació dels nous cossos ---
-        this.bodies.splice(index, 1); // Elimina el cos original
-
+        // Dividir el cercle en N sectors amb angles aleatoris
+        let randoms = [];
+        let total = 0;
         for (let i = 0; i < N; i++) {
-            const m = masses[i];
-            const p_cm_x = cmMomenta[i].px;
-            const p_cm_y = cmMomenta[i].py;
-
-            // Velocitat final = velocitat original del CM + velocitat de l'explosió
-            const vx = body.vx + p_cm_x / m;
-            const vy = body.vy + p_cm_y / m;
-
-            // Crea el nou cos amb un petit desplaçament per evitar la fusió immediata
-            const offsetAngle = (i / N) * 2 * Math.PI;
-            const offsetDist = body.radius > 1 ? body.radius : 2.0; // Desplaça fora del radi original
-            const x = body.x + offsetDist * Math.cos(offsetAngle);
-            const y = body.y + offsetDist * Math.sin(offsetAngle);
-            
-            this.createBody(m, x, y, vx, vy);
+            // Assegura que r no sigui mai 0 ni 1
+            const r = Math.random() * 0.98 + 0.01;
+            randoms.push(r);
+            total += r;
         }
+        const sectors = randoms.map(r => (r / total) * (2 * Math.PI));
 
+        // Calcular la magnitud del moment per fragment (moment lineal = massa · velocitat)
+        const origSpeed = Math.sqrt(body.vx * body.vx + body.vy * body.vy);
+        const pPerFragment = (body.mass * origSpeed) / N;
+
+        // Elimina el cos original
+        this.bodies.splice(index, 1);
+
+        // Dividir el cercle segons els sectors i crear cada fragment
+        let currentAngle = 0;
+        for (let i = 0; i < N; i++) {
+            const theta = sectors[i]; // Angle del sector
+            const bisector = currentAngle + theta / 2; // Bisectriu del sector
+            // La massa del fragment és la fracció de la massa original segons l'angle del sector
+            const fragMass = (theta / (2 * Math.PI)) * body.mass;
+            // Calcular la velocitat de manera que: massa_fragment * velocitat = pPerFragment
+            const fragSpeed = fragMass > 0 ? pPerFragment / fragMass : 0;
+            //console.log(`Fragment ${i + 1}: massa=${fragMass.toFixed(2)}, velocitat=${fragSpeed.toFixed(2)}`);
+            // Posicionar el fragment sobre el contorn del cos original més un radi addicional en funció de la velocitat
+            // per evitar superposició amb el cos original
+            const offsetDist = body.radius * 3 + fragSpeed; // triple del radi++ per evitar superposició
+            const fragX = body.x + offsetDist * Math.cos(bisector);
+            const fragY = body.y + offsetDist * Math.sin(bisector);
+            // La velocitat és radial cap a fora
+            const fragVx = fragSpeed * Math.cos(bisector);
+            const fragVy = fragSpeed * Math.sin(bisector);
+            this.createBody(fragMass, fragX, fragY, fragVx, fragVy);
+            currentAngle += theta;
+        }
         this.updateStatus();
     }
 
