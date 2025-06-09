@@ -41,12 +41,13 @@ class GravitySimulator {
                 canvasWidth = rect.width;
                 canvasHeight = rect.width / this.simRatio;
             }
-            // Scalem els cossos per mantenir la posició relativa:
+            // Escala les posicions i el radi dels cossos proporcionalment
             const oldDim = { ...this.dimSpace };
             if (oldDim.x && oldDim.y) {
                 this.bodies.forEach(body => {
                     body.x = body.x / oldDim.x * canvasWidth;
                     body.y = body.y / oldDim.y * canvasHeight;
+                    body.radius = body.radius / oldDim.y * canvasHeight; // escalat del radi
                 });
             }
             // Actualitza dimSpace amb les noves dimensions
