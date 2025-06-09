@@ -7,11 +7,13 @@ class GravitySimulator {
         this.animationId = null;
         
         // Paràmetres
-        this.G = 0.001;
-        // S'elimina el valor fix de dimSpace i s'assigna el mínim entre amplada i alçada del container
         const container = document.querySelector('.canvas-container');
         const rect = container.getBoundingClientRect();
-        this.dimSpace = Math.min(rect.width, rect.height);
+        // Inicialitza dimSpace amb la amplada (x) i l'alçada (y) inicials
+        this.dimSpace = { x: rect.width, y: rect.height };
+        // Guarda la proporció inicial del canvas
+        this.simRatio = this.dimSpace.x / this.dimSpace.y;
+        this.G = 0.001;
         this.maxMass = 10000;
         this.density = 1.0;
         
@@ -27,16 +29,33 @@ class GravitySimulator {
     }
 
     setupCanvas() {
-        // Usar el contenedor para obtener dimensiones
         const container = document.querySelector('.canvas-container');
         const resizeCanvas = () => {
             const rect = container.getBoundingClientRect();
-            const side = Math.min(rect.width, rect.height);
-            this.canvas.width = side * window.devicePixelRatio;
-            this.canvas.height = side * window.devicePixelRatio;
+            let canvasWidth, canvasHeight;
+            // Calcula dimensions que mantenen la relació original (simRatio) i s'ajusten dins de canvas-container
+            if (rect.width / rect.height > this.simRatio) {
+                canvasHeight = rect.height;
+                canvasWidth = rect.height * this.simRatio;
+            } else {
+                canvasWidth = rect.width;
+                canvasHeight = rect.width / this.simRatio;
+            }
+            // Scalem els cossos per mantenir la posició relativa:
+            const oldDim = { ...this.dimSpace };
+            if (oldDim.x && oldDim.y) {
+                this.bodies.forEach(body => {
+                    body.x = body.x / oldDim.x * canvasWidth;
+                    body.y = body.y / oldDim.y * canvasHeight;
+                });
+            }
+            // Actualitza dimSpace amb les noves dimensions
+            this.dimSpace = { x: canvasWidth, y: canvasHeight };
+            this.canvas.width = canvasWidth * window.devicePixelRatio;
+            this.canvas.height = canvasHeight * window.devicePixelRatio;
             this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-            this.canvas.style.width = side + 'px';
-            this.canvas.style.height = side + 'px';
+            this.canvas.style.width = canvasWidth + 'px';
+            this.canvas.style.height = canvasHeight + 'px';
         };
         
         resizeCanvas();
@@ -54,9 +73,7 @@ class GravitySimulator {
         document.getElementById('paramG').addEventListener('input', (e) => {
             const index = parseInt(e.target.value);
             const output = document.getElementById('paramGValue');
-            if (output) {
-                output.value = gVals[index];
-            }
+            if (output) { output.value = gVals[index]; }
             this.G = parseFloat(gVals[index]);
         });
         
@@ -65,9 +82,7 @@ class GravitySimulator {
         document.getElementById('paramMassa').addEventListener('input', (e) => {
             const index = parseInt(e.target.value);
             const output = document.getElementById('paramMassaValue');
-            if (output) {
-                output.value = massVals[index];
-            }
+            if (output) { output.value = massVals[index]; }
             this.maxMass = parseInt(massVals[index], 10);
         });
         
@@ -76,9 +91,7 @@ class GravitySimulator {
         document.getElementById('paramDens').addEventListener('input', (e) => {
             const index = parseInt(e.target.value);
             const output = document.getElementById('paramDensValue');
-            if (output) {
-                output.value = densVals[index];
-            }
+            if (output) { output.value = densVals[index]; }
             this.density = parseFloat(densVals[index]);
             // Recalcular el radi de tots els cossos segons la nova densitat
             this.bodies.forEach(body => {
@@ -110,8 +123,9 @@ class GravitySimulator {
 
     handleClick(e) {
         const rect = this.canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) * this.dimSpace / rect.width;
-        const y = (e.clientY - rect.top) * this.dimSpace / rect.height;
+        // Converteix les coordenades tenint en compte dimensions x i y
+        const x = (e.clientX - rect.left) * (this.dimSpace.x / rect.width);
+        const y = (e.clientY - rect.top) * (this.dimSpace.y / rect.height);
         
         const mass = Math.max(1, Math.random() * this.maxMass / 10);
         this.createBody(mass, x, y, 0, 0);
@@ -119,8 +133,8 @@ class GravitySimulator {
 
     handleMouseMove(e) {
         const rect = this.canvas.getBoundingClientRect();
-        const x = (e.clientX - rect.left) * this.dimSpace / rect.width;
-        const y = (e.clientY - rect.top) * this.dimSpace / rect.height;
+        const x = (e.clientX - rect.left) * (this.dimSpace.x / rect.width);
+        const y = (e.clientY - rect.top) * (this.dimSpace.y / rect.height);
         
         const body = this.findBodyAt(x, y);
         if (body) {
@@ -133,7 +147,7 @@ class GravitySimulator {
 
     createBody(mass, x, y, vx, vy) {
         // Validar paràmetres
-        if (mass <= 0 || x < 0 || x >= this.dimSpace || y < 0 || y >= this.dimSpace) {
+        if (mass <= 0 || x < 0 || x >= this.dimSpace.x || y < 0 || y >= this.dimSpace.y) {
             console.warn('Paràmetres invàlids per crear un cos:', { mass, x, y, vx, vy });
             return;
         };
@@ -154,22 +168,20 @@ class GravitySimulator {
         return Math.pow(mass / (Math.PI * this.density), 1/3);
     }
 
-    // Nuevo método auxiliar para calcular la diferencia toroidal
-    getWrappedDelta(delta) {
-        if (Math.abs(delta) > this.dimSpace / 2) {
-            return delta > 0 ? delta - this.dimSpace : delta + this.dimSpace;
+    // Nou mètode auxiliar per a la diferència toroidal per cada eix
+    getWrappedDelta(delta, dim) {
+        if (Math.abs(delta) > dim / 2) {
+            return delta > 0 ? delta - dim : delta + dim;
         }
         return delta;
     }
 
     findBodyAt(x, y) {
         for (let body of this.bodies) {
-            const dx = this.getWrappedDelta(x - body.x);
-            const dy = this.getWrappedDelta(y - body.y);
+            const dx = this.getWrappedDelta(x - body.x, this.dimSpace.x);
+            const dy = this.getWrappedDelta(y - body.y, this.dimSpace.y);
             const distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance <= body.radius) {
-                return body;
-            }
+            if (distance <= body.radius) { return body; }
         }
         return null;
     }
@@ -181,8 +193,8 @@ class GravitySimulator {
             for (let j = 0; j < this.bodies.length; j++) {
                 if (i === j) continue;
                 
-                const dx = this.getWrappedDelta(this.bodies[j].x - this.bodies[i].x);
-                const dy = this.getWrappedDelta(this.bodies[j].y - this.bodies[i].y);
+                const dx = this.getWrappedDelta(this.bodies[j].x - this.bodies[i].x, this.dimSpace.x);
+                const dy = this.getWrappedDelta(this.bodies[j].y - this.bodies[i].y, this.dimSpace.y);
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance > 0) {
@@ -203,10 +215,10 @@ class GravitySimulator {
             body.y += body.vy;
             
             // Efecte toroidal
-            if (body.x < 0) body.x += this.dimSpace;
-            if (body.x >= this.dimSpace) body.x -= this.dimSpace;
-            if (body.y < 0) body.y += this.dimSpace;
-            if (body.y >= this.dimSpace) body.y -= this.dimSpace;
+            if (body.x < 0) body.x += this.dimSpace.x;
+            if (body.x >= this.dimSpace.x) body.x -= this.dimSpace.x;
+            if (body.y < 0) body.y += this.dimSpace.y;
+            if (body.y >= this.dimSpace.y) body.y -= this.dimSpace.y;
         }
     }
 
@@ -224,14 +236,13 @@ class GravitySimulator {
         let merged = false;
         for (let i = 0; i < this.bodies.length; i++) {
             for (let j = i + 1; j < this.bodies.length; j++) {
-                const body1 = this.bodies[i];
-                const body2 = this.bodies[j];
-                const dx = this.getWrappedDelta(body1.x - body2.x);
-                const dy = this.getWrappedDelta(body1.y - body2.y);
+                const body1 = this.bodies[i], body2 = this.bodies[j];
+                const dx = this.getWrappedDelta(body1.x - body2.x, this.dimSpace.x);
+                const dy = this.getWrappedDelta(body1.y - body2.y, this.dimSpace.y);
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance < (body1.radius + body2.radius)) {
-                    // Conservación de massa y momento lineal
+                    // Conservació de massa i moment lineal
                     const totalMass = body1.mass + body2.mass;
                     const newX = (body1.x * body1.mass + body2.x * body2.mass) / totalMass;
                     const newY = (body1.y * body1.mass + body2.y * body2.mass) / totalMass;
@@ -256,10 +267,7 @@ class GravitySimulator {
             if (merged) break;
         }
         
-        if (merged) {
-            this.updateStatus();
-            this.mergeBodies();
-        }
+        if (merged) { this.updateStatus(); this.mergeBodies(); }
     }
 
     /**
@@ -331,9 +339,9 @@ class GravitySimulator {
         this.ctx.clearRect(0, 0, rect.width, rect.height);
         
         for (let body of this.bodies) {
-            const x = (body.x * rect.width) / this.dimSpace;
-            const y = (body.y * rect.height) / this.dimSpace;
-            const radius = Math.max(1, (body.radius * rect.height) / this.dimSpace);
+            const x = (body.x * rect.width) / this.dimSpace.x;
+            const y = (body.y * rect.height) / this.dimSpace.y;
+            const radius = Math.max(1, (body.radius * rect.height) / this.dimSpace.y);
             
             this.ctx.fillStyle = this.massToColor(body.mass);
             this.ctx.strokeStyle = this.ctx.fillStyle;
@@ -344,48 +352,14 @@ class GravitySimulator {
             this.ctx.fill();
             
             // Dibuixar cossos en els marges (efecte toroidal)
-            if (x - radius < 0) {
-                this.ctx.beginPath();
-                this.ctx.arc(x + rect.width, y, radius, 0, 2 * Math.PI);
-                this.ctx.fill();
-            }
-            if (x + radius > rect.width) {
-                this.ctx.beginPath();
-                this.ctx.arc(x - rect.width, y, radius, 0, 2 * Math.PI);
-                this.ctx.fill();
-            }
-            if (y - radius < 0) {
-                this.ctx.beginPath();
-                this.ctx.arc(x, y + rect.height, radius, 0, 2 * Math.PI);
-                this.ctx.fill();
-            }
-            if (y + radius > rect.height) {
-                this.ctx.beginPath();
-                this.ctx.arc(x, y - rect.height, radius, 0, 2 * Math.PI);
-                this.ctx.fill();
-            }
-            
-            // Cantonades
-            if (x - radius < 0 && y - radius < 0) {
-                this.ctx.beginPath();
-                this.ctx.arc(x + rect.width, y + rect.height, radius, 0, 2 * Math.PI);
-                this.ctx.fill();
-            }
-            if (x + radius > rect.width && y + radius > rect.height) {
-                this.ctx.beginPath();
-                this.ctx.arc(x - rect.width, y - rect.height, radius, 0, 2 * Math.PI);
-                this.ctx.fill();
-            }
-            if (x - radius < 0 && y + radius > rect.height) {
-                this.ctx.beginPath();
-                this.ctx.arc(x + rect.width, y - rect.height, radius, 0, 2 * Math.PI);
-                this.ctx.fill();
-            }
-            if (x + radius > rect.width && y - radius < 0) {
-                this.ctx.beginPath();
-                this.ctx.arc(x - rect.width, y + rect.height, radius, 0, 2 * Math.PI);
-                this.ctx.fill();
-            }
+            if (x - radius < 0) { this.ctx.beginPath(); this.ctx.arc(x + rect.width, y, radius, 0, 2 * Math.PI); this.ctx.fill(); }
+            if (x + radius > rect.width) { this.ctx.beginPath(); this.ctx.arc(x - rect.width, y, radius, 0, 2 * Math.PI); this.ctx.fill(); }
+            if (y - radius < 0) { this.ctx.beginPath(); this.ctx.arc(x, y + rect.height, radius, 0, 2 * Math.PI); this.ctx.fill(); }
+            if (y + radius > rect.height) { this.ctx.beginPath(); this.ctx.arc(x, y - rect.height, radius, 0, 2 * Math.PI); this.ctx.fill(); }
+            if (x - radius < 0 && y - radius < 0) { this.ctx.beginPath(); this.ctx.arc(x + rect.width, y + rect.height, radius, 0, 2 * Math.PI); this.ctx.fill(); }
+            if (x + radius > rect.width && y + radius > rect.height) { this.ctx.beginPath(); this.ctx.arc(x - rect.width, y - rect.height, radius, 0, 2 * Math.PI); this.ctx.fill(); }
+            if (x - radius < 0 && y + radius > rect.height) { this.ctx.beginPath(); this.ctx.arc(x + rect.width, y - rect.height, radius, 0, 2 * Math.PI); this.ctx.fill(); }
+            if (x + radius > rect.width && y - radius < 0) { this.ctx.beginPath(); this.ctx.arc(x - rect.width, y + rect.height, radius, 0, 2 * Math.PI); this.ctx.fill(); }
         }
     }
 
@@ -422,7 +396,7 @@ class GravitySimulator {
         this.updateVelocities();
         this.moveBodies();
         this.mergeBodies();
-        this.handleExplosions(); // Comprova explosions també en el pas manual
+        this.handleExplosions();
         this.updateStatus();
     }
 
@@ -441,7 +415,7 @@ class GravitySimulator {
             this.updateVelocities();
             this.moveBodies();
             this.mergeBodies();
-            this.handleExplosions(); // NOU: Comprovar explosions a cada frame
+            this.handleExplosions();
         }
         
         this.draw();
