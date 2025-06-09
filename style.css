@@ -59,6 +59,8 @@ body {
     box-sizing: border-box;
     justify-content: space-around; /* Espacio entre los elementos */
     text-align: center;
+    overflow-y: auto;
+    max-height: 100vh;
 }
 
 .canvas-container {
