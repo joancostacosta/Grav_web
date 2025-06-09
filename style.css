@@ -20,6 +20,7 @@ body {
 }
 
 .control-btn {
+    width: 200px;
     background: linear-gradient(45deg, #4CAF50, #45a049);
     border: none;
     padding: 8px 16px;
@@ -52,7 +53,7 @@ body {
 }
 
 .sidebar {
-    width: 300px; /* ajustar ancho según convenga */
+    width: 400px; /* ajustar ancho según convenga */
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -121,7 +122,7 @@ canvas {
     border-radius: 8px;
     display: flex;
     flex-flow: column nowrap;
-    align-items: stretch;
+    align-items: center;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     background-color: #333;
     gap: 15px;
