@@ -11,6 +11,8 @@ class GravitySimulator {
         const rect = container.getBoundingClientRect();
         // Inicialitza dimSpace amb la amplada (x) i l'alçada (y) inicials
         this.dimSpace = { x: rect.width, y: rect.height };
+        // Guarda la altura inicial per al factor d'escala dels radis
+        this.baseHeight = rect.height;
         // Guarda la proporció inicial del canvas
         this.simRatio = this.dimSpace.x / this.dimSpace.y;
         this.G = 0.001;
@@ -166,7 +168,8 @@ class GravitySimulator {
     }
 
     calculateRadius(mass) {
-        return Math.pow(mass / (Math.PI * this.density), 1/3);
+        const baseRadius = Math.pow(mass / (Math.PI * this.density), 1/3);
+        return baseRadius * (this.dimSpace.y / this.baseHeight);
     }
 
     // Nou mètode auxiliar per a la diferència toroidal per cada eix
