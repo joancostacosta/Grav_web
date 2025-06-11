@@ -187,9 +187,16 @@ class GravitySimulator {
      * @param {number} vy - Velocitat inicial en Y
      */
     createBody(mass, x, y, vx, vy) {
+
+        // Ajustar les coordenades per l'efecte toroidal
+        if (x >= this.dimSpace.x) x -= this.dimSpace.x;
+        if (y >= this.dimSpace.y) y -= this.dimSpace.y;
+        if (x < 0) x += this.dimSpace.x;
+        if (y < 0) y += this.dimSpace.y;
+
         // Validar paràmetres de creació del cos
-        if (mass <= 0 || x < 0 || x >= this.dimSpace.x || y < 0 || y >= this.dimSpace.y) {
-            console.warn('Paràmetres invàlids per crear un cos:', { mass, x, y, vx, vy });
+        if (mass <= 0) {
+            console.warn('Paràmetres invàlids per crear un cos: massa = ', { mass });
             return;
         };
 
@@ -313,15 +320,21 @@ class GravitySimulator {
         for (let i = 0; i < this.bodies.length; i++) {
             for (let j = i + 1; j < this.bodies.length; j++) {
                 const body1 = this.bodies[i], body2 = this.bodies[j];
-                const dx = this.getWrappedDelta(body1.x - body2.x, this.dimSpace.x);
-                const dy = this.getWrappedDelta(body1.y - body2.y, this.dimSpace.y);
+                // Calcular la diferencia toroidal (usant body1 com a referència)
+                const dx = this.getWrappedDelta(body2.x - body1.x, this.dimSpace.x);
+                const dy = this.getWrappedDelta(body2.y - body1.y, this.dimSpace.y);
                 const distance = Math.sqrt(dx * dx + dy * dy);
                 
                 if (distance < (body1.radius + body2.radius)) {
-                    // Conservació de massa i moment lineal
+                    // Conservació de massa i moment lineal amb geometria toroidal
                     const totalMass = body1.mass + body2.mass;
-                    const newX = (body1.x * body1.mass + body2.x * body2.mass) / totalMass;
-                    const newY = (body1.y * body1.mass + body2.y * body2.mass) / totalMass;
+                    // Posició nova: body1.x + (dx ponderat per la massa relativa de body2)
+                    let newX = body1.x + dx * (body2.mass / totalMass);
+                    let newY = body1.y + dy * (body2.mass / totalMass);
+                    // Aplicar l'efecte toroidal a la nova posició
+                    newX = ((newX % this.dimSpace.x) + this.dimSpace.x) % this.dimSpace.x;
+                    newY = ((newY % this.dimSpace.y) + this.dimSpace.y) % this.dimSpace.y;
+                    
                     const newVx = (body1.vx * body1.mass + body2.vx * body2.mass) / totalMass;
                     const newVy = (body1.vy * body1.mass + body2.vy * body2.mass) / totalMass;
                     
@@ -382,7 +395,6 @@ class GravitySimulator {
 
         // Energia cinètica repartida equitativament per fragment
         const energyPerFragment = explosionEnergy / N;
-
         // Elimina el cos original
         this.bodies.splice(index, 1);
 
@@ -398,9 +410,11 @@ class GravitySimulator {
             //console.log(`Fragment ${i + 1}: massa=${fragMass.toFixed(2)}, velocitat=${fragSpeed.toFixed(2)}`);
             // Posicionar el fragment amb un offset per evitar superposició
             const offsetDist = body.radius * 3 + fragSpeed;
-            const fragX = body.x + offsetDist * Math.cos(bisector);
-            const fragY = body.y + offsetDist * Math.sin(bisector);
-            // La velocitat és radial cap a fora afegint la velocitat original del cos
+            let fragX = body.x + offsetDist * Math.cos(bisector);
+            let fragY = body.y + offsetDist * Math.sin(bisector);
+            // Ajustar les coordenades per l'efecte toroidal
+            fragX = ((fragX % this.dimSpace.x) + this.dimSpace.x) % this.dimSpace.x;
+            fragY = ((fragY % this.dimSpace.y) + this.dimSpace.y) % this.dimSpace.y;
             const fragVx = body.vx + fragSpeed * Math.cos(bisector);
             const fragVy = body.vy + fragSpeed * Math.sin(bisector);
             this.createBody(fragMass, fragX, fragY, fragVx, fragVy);
