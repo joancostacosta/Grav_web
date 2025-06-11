@@ -1,27 +1,29 @@
+/* Estils generals */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Configuració del cos de la pàgina */
 body {
     font-family: Arial, sans-serif;
-    /*background: linear-gradient(135deg, #1e3c72, #2a5298);*/
     background-color: #333;
     color: white;
     overflow: hidden;
-    height: 100vh; /* Propiedad añadida para ocupar el 100% de la altura */
+    height: 100vh;
 }
 
+/* Contenidor principal de la pàgina */
 .container {
     display: flex;
     flex-direction: row;
-    height: 100%; /* Propiedad añadida para ocupar el 100% de la altura */
+    height: 100%;
 }
 
+/* Estil base per a tots els botons de control */
 .control-btn {
     width: 200px;
-    background: linear-gradient(45deg, #4CAF50, #45a049);
     border: none;
     padding: 8px 16px;
     border-radius: 20px;
@@ -30,66 +32,73 @@ body {
     font-weight: 500;
     transition: all 0.3s ease;
     box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+    background: linear-gradient(45deg, #4CAF50, #45a049);
 }
 
+/* Estil dels botons de control en hover */
 .control-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
 }
 
+/* Estil dels botons de control quan estan actius */
 .control-btn.active {
     background: linear-gradient(45deg, #ff6b6b, #ee5a52);
     box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
 }
 
+/* Estil del botó de netejar */
 .clear-btn {
     background: linear-gradient(45deg, #ff6b6b, #ee5a52);
     box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
 }
 
+/* Estil del botó de pas a pas */
 .step-btn {
     background: linear-gradient(45deg, #9f6bff, #4213ec);
     box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
 }
 
+/* Barra lateral de controls */
 .sidebar {
-    width: 400px; /* ajustar ancho según convenga */
+    width: 400px;
     display: flex;
     flex-direction: column;
     padding: 1rem;
     box-sizing: border-box;
-    justify-content: space-around; /* Espacio entre los elementos */
+    justify-content: space-around;
     text-align: center;
     overflow-y: auto;
     max-height: 100vh;
 }
 
+/* Contenidor del canvas */
 .canvas-container {
     flex: 1;
     position: relative;
-    display: flex; /* afegit per centrar el canvas */
-    justify-content: center; /* aliniació horitzontal */
-    align-items: center; /* aliniació vertical */
-    background: #222; /* color dels marges diferent del fons de gravCanvas */
-    overflow: hidden; /* assegura que no es mostri scroll */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #222;
+    overflow: hidden;
 }
 
+/* Canvas de la simulació */
 canvas {
     display: block;
-    width: 100%;  /* modificat per evitar que ompli tot el container */
-    height: 100%; /* modificat per evitar que ompli tot el container */
-    background: radial-gradient(circle at center, #0f0f23, #000); /* fons de simulació per gravCanvas */
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #0f0f23, #000);
     cursor: crosshair;
 }
 
+/* Títol de la simulació */
 #titol {
-    /*font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;*/
     text-align: center;
-    color: #ffffff;
+    color: white;
 }
 
+/* Secció d'instruccions */
 .instruccions {
     display: block;
     background-color: #333;
@@ -102,23 +111,25 @@ canvas {
     text-align: center;
 }
 
+/* Títol de les instruccions */
 .instruccions h3 {
     margin-bottom: 12px;
-    /* color: #4CAF50;*/
-} 
+}
 
+/* Pàrrofes d'instruccions */
 .instruccions p {
     margin: 8px 0;
 }
 
+/* Estils per als comptadors i estadístiques */
 #fpsCounter, #statusTime, #statusBodies, #statusMouse {
     font-size: 12px;
     font-weight: 500;
-    font-family: inherit; /* Igualar amb els labels del toolbar */
+    font-family: inherit;
 }
 
+/* Contenidor de controls */
 .controls {
-    /*background: rgba(0, 0, 0, 0.8);*/
     padding: 10px;
     border-radius: 8px;
     display: flex;
@@ -128,7 +139,4 @@ canvas {
     background-color: #333;
     gap: 15px;
     text-align: center;
-    /*backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);*/
 }

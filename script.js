@@ -1,4 +1,8 @@
 class GravitySimulator {
+    /**
+     * Constructor de la classe GravitySimulator
+     * Inicialitza els paràmetres de la simulació i els esdeveniments
+     */
     constructor() {
         this.canvas = document.getElementById('gravCanvas');
         this.ctx = this.canvas.getContext('2d');
@@ -6,20 +10,23 @@ class GravitySimulator {
         this.isRunning = false;
         this.animationId = null;
         
-        // Paràmetres
+        // Paràmetres de la simulació
         const container = document.querySelector('.canvas-container');
         const rect = container.getBoundingClientRect();
-        // Inicialitza dimSpace amb la amplada (x) i l'alçada (y) inicials
+        // Inicialitza les dimensions inicials de l'espai
         this.dimSpace = { x: rect.width, y: rect.height };
-        // Guarda la altura inicial per al factor d'escala dels radis
+        // Guarda l'alçada inicial per calcular els radis
         this.baseHeight = rect.height;
         // Guarda la proporció inicial del canvas
         this.simRatio = this.dimSpace.x / this.dimSpace.y;
+        // Constant de gravetat
         this.G = 0.001;
+        // Massa màxima per als cossos
         this.maxMass = 10000;
+        // Densitat dels cossos
         this.density = 1.0;
         
-        // FPS tracking
+        // Seguiment dels FPS
         this.lastTime = 0;
         this.fps = 0;
         this.frameCount = 0;
@@ -30,12 +37,16 @@ class GravitySimulator {
         this.animate();
     }
 
+    /**
+     * Configura el canvas i el seu comportament de redimensionament
+     * Manté la proporció del canvas i escala els cossos adequadament
+     */
     setupCanvas() {
         const container = document.querySelector('.canvas-container');
         const resizeCanvas = () => {
             const rect = container.getBoundingClientRect();
             let canvasWidth, canvasHeight;
-            // Calcula dimensions que mantenen la relació original (simRatio) i s'ajusten dins de canvas-container
+            // Calcula les dimensions mantenint la proporció original (simRatio) dins del contenidor del canvas
             if (rect.width / rect.height > this.simRatio) {
                 canvasHeight = rect.height;
                 canvasWidth = rect.height * this.simRatio;
@@ -43,13 +54,13 @@ class GravitySimulator {
                 canvasWidth = rect.width;
                 canvasHeight = rect.width / this.simRatio;
             }
-            // Escala les posicions i el radi dels cossos proporcionalment
+            // Escala les posicions i els radis dels cossos proporcionalment
             const oldDim = { ...this.dimSpace };
             if (oldDim.x && oldDim.y) {
                 this.bodies.forEach(body => {
                     body.x = body.x / oldDim.x * canvasWidth;
                     body.y = body.y / oldDim.y * canvasHeight;
-                    body.radius = body.radius / oldDim.y * canvasHeight; // escalat del radi
+                    body.radius = body.radius / oldDim.y * canvasHeight; // Escalat del radi
                 });
             }
             // Actualitza dimSpace amb les noves dimensions
@@ -65,13 +76,22 @@ class GravitySimulator {
         window.addEventListener('resize', resizeCanvas);
     }
 
+    /**
+     * Configura tots els esdeveniments d'interacció:
+     * - Boto de reproducció/pausa
+     * - Boto de netejar
+     * - Boto de pas a pas
+     * - Paràmetres de gravetat, massa màxima i densitat
+     * - Esdeveniments del canvas (clic, moviment del ratolí)
+     * - Esdeveniments del teclat (ESC, Espai)
+     */
     setupEventListeners() {
         // Controls
         document.getElementById('playBtn').addEventListener('click', () => this.toggleSimulation());
         document.getElementById('clearBtn').addEventListener('click', () => this.clearAll());
         document.getElementById('stepBtn').addEventListener('click', () => this.stepSimulation());
         
-        // gestió paramG
+        // Gestió del paràmetre de gravetat
         const gVals = ['0.001','0.010','0.100','1.000'];
         document.getElementById('paramG').addEventListener('input', (e) => {
             const index = parseInt(e.target.value);
@@ -80,7 +100,7 @@ class GravitySimulator {
             this.G = parseFloat(gVals[index]);
         });
         
-        // gestió paramMassa:
+        // Gestió del paràmetre de massa màxima
         const massVals = ["5000", "10000", "20000", "40000"];
         document.getElementById('paramMassa').addEventListener('input', (e) => {
             const index = parseInt(e.target.value);
@@ -89,20 +109,20 @@ class GravitySimulator {
             this.maxMass = parseInt(massVals[index], 10);
         });
         
-        // gestió paramDens:
+        // Gestió del paràmetre de densitat
         const densVals = ["0.01", "0.10", "1.00", "10.00", "100.00"];
         document.getElementById('paramDens').addEventListener('input', (e) => {
             const index = parseInt(e.target.value);
             const output = document.getElementById('paramDensValue');
             if (output) { output.value = densVals[index]; }
             this.density = parseFloat(densVals[index]);
-            // Recalcular el radi de tots els cossos segons la nova densitat
+            // Recalcular els radis de tots els cossos segons la nova densitat
             this.bodies.forEach(body => {
                 body.radius = this.calculateRadius(body.mass);
             });
         });
 
-        // Canvas events
+        // Esdeveniments del canvas
         this.canvas.addEventListener('click', (e) => this.handleClick(e));
         this.canvas.addEventListener('contextmenu', (e) => {
             e.preventDefault();
@@ -110,7 +130,7 @@ class GravitySimulator {
         });
         this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
 
-        // Keyboard events
+        // Esdeveniments del teclat
         document.addEventListener('keydown', (e) => {
             switch(e.code) {
                 case 'Escape':
@@ -124,6 +144,11 @@ class GravitySimulator {
         });
     }
 
+    /**
+     * Gestiona el clic del ratolí sobre el canvas
+     * Crea un nou cos amb massa aleatòria al punt de clic
+     * @param {Event} e - Event de clic del ratolí
+     */
     handleClick(e) {
         const rect = this.canvas.getBoundingClientRect();
         // Converteix les coordenades tenint en compte dimensions x i y
@@ -134,6 +159,11 @@ class GravitySimulator {
         this.createBody(mass, x, y, 0, 0);
     }
 
+    /**
+     * Gestiona el moviment del ratolí sobre el canvas
+     * Mostra informació del cos si el ratolí està sobre un
+     * @param {Event} e - Event de moviment del ratolí
+     */
     handleMouseMove(e) {
         const rect = this.canvas.getBoundingClientRect();
         const x = (e.clientX - rect.left) * (this.dimSpace.x / rect.width);
@@ -148,8 +178,16 @@ class GravitySimulator {
         }
     }
 
+    /**
+     * Crea un nou cos amb les característiques especificades
+     * @param {number} mass - Massa del cos
+     * @param {number} x - Posició X inicial
+     * @param {number} y - Posició Y inicial
+     * @param {number} vx - Velocitat inicial en X
+     * @param {number} vy - Velocitat inicial en Y
+     */
     createBody(mass, x, y, vx, vy) {
-        // Validar paràmetres
+        // Validar paràmetres de creació del cos
         if (mass <= 0 || x < 0 || x >= this.dimSpace.x || y < 0 || y >= this.dimSpace.y) {
             console.warn('Paràmetres invàlids per crear un cos:', { mass, x, y, vx, vy });
             return;
@@ -167,12 +205,22 @@ class GravitySimulator {
         this.updateStatus();
     }
 
+    /**
+     * Calcula el radi d'un cos basant-se en la seva massa i densitat
+     * @param {number} mass - Massa del cos
+     * @returns {number} Radi del cos
+     */
     calculateRadius(mass) {
         const baseRadius = Math.pow(mass / (Math.PI * this.density), 1/3);
         return baseRadius * (this.dimSpace.y / this.baseHeight);
     }
 
-    // Nou mètode auxiliar per a la diferència toroidal per cada eix
+    /**
+     * Calcula la diferència toroidal entre dues posicions
+     * @param {number} delta - Diferència entre posicions
+     * @param {number} dim - Dimensió de l'espai
+     * @returns {number} Diferència toroidal ajustada
+     */
     getWrappedDelta(delta, dim) {
         if (Math.abs(delta) > dim / 2) {
             return delta > 0 ? delta - dim : delta + dim;
@@ -180,6 +228,12 @@ class GravitySimulator {
         return delta;
     }
 
+    /**
+     * Troba un cos a una posició donada
+     * @param {number} x - Coordenada X
+     * @param {number} y - Coordenada Y
+     * @returns {Object|null} Cos trobat o null si no n'hi ha
+     */
     findBodyAt(x, y) {
         for (let body of this.bodies) {
             const dx = this.getWrappedDelta(x - body.x, this.dimSpace.x);
@@ -190,6 +244,10 @@ class GravitySimulator {
         return null;
     }
 
+    /**
+     * Actualitza les velocitats de tots els cossos
+     * Aplica la força gravitacional entre tots els cossos
+     */
     updateVelocities() {
         for (let i = 0; i < this.bodies.length; i++) {
             let ax = 0, ay = 0;
@@ -213,6 +271,10 @@ class GravitySimulator {
         }
     }
 
+    /**
+     * Mou tots els cossos segons les seves velocitats
+     * Aplica l'efecte toroidal quan els cossos surten del canvas
+     */
     moveBodies() {
         for (let body of this.bodies) {
             body.x += body.vx;
@@ -226,6 +288,12 @@ class GravitySimulator {
         }
     }
 
+    /**
+     * Converteix la massa d'un cos en un color RGB
+     * El color varia segons la massa del cos
+     * @param {number} mass - Massa del cos
+     * @returns {string} Color en format RGB
+     */
     massToColor(mass) {
         const ratio = Math.min(mass / this.maxMass, 1);
         
@@ -236,6 +304,10 @@ class GravitySimulator {
         return `rgb(${r}, ${g}, ${b})`;
     }
 
+    /**
+     * Fusiona els cossos que s'enganxen
+     * Conserva la massa total i el moment lineal
+     */
     mergeBodies() {
         let merged = false;
         for (let i = 0; i < this.bodies.length; i++) {
@@ -338,6 +410,10 @@ class GravitySimulator {
     }
 
 
+    /**
+     * Dibuixa tots els cossos al canvas
+     * Inclou l'efecte toroidal dibuixant els cossos als marges
+     */
     draw() {
         const rect = this.canvas.getBoundingClientRect();
         this.ctx.clearRect(0, 0, rect.width, rect.height);
@@ -368,6 +444,10 @@ class GravitySimulator {
     }
 
     
+    /**
+     * Actualitza l'estat de la simulació
+     * Mostra els estadístiques: estat, nombre de cossos i massa total
+     */
     updateStatus() {
         const totalMass = this.bodies.reduce((sum, body) => sum + body.mass, 0);
         document.getElementById('statusTime').textContent = 
@@ -376,6 +456,10 @@ class GravitySimulator {
             `#Cossos: ${this.bodies.length} | Massa total: ${totalMass.toFixed(0)}`;
     }
 
+    /**
+     * Actualitza els FPS de la simulació
+     * @param {number} currentTime - Temps actual en mil·lisegons
+     */
     updateFPS(currentTime) {
         this.frameCount++;
         if (currentTime - this.fpsTime >= 1000) {
@@ -386,6 +470,9 @@ class GravitySimulator {
         }
     }
 
+    /**
+     * Alterna entre reproduir i pausar la simulació
+     */
     toggleSimulation() {
         this.isRunning = !this.isRunning;
         document.getElementById('playBtn').textContent = this.isRunning ? '⏸ Parar' : '▶ Iniciar';
@@ -393,6 +480,10 @@ class GravitySimulator {
         this.updateStatus();
     }
 
+    /**
+     * Fa un pas únic de la simulació
+     * Pausa la simulació després de l'execució
+     */
     stepSimulation() {
         this.isRunning = false;
         document.getElementById('playBtn').textContent = '▶ Iniciar';
@@ -404,6 +495,10 @@ class GravitySimulator {
         this.updateStatus();
     }
 
+    /**
+     * Netegja tota la simulació
+     * Elimina tots els cossos i reinicia els estadístiques
+     */
     clearAll() {
         this.bodies = [];
         this.isRunning = false;
@@ -412,9 +507,21 @@ class GravitySimulator {
         this.updateStatus();
     }
 
+    /**
+     * Funció principal d'animació
+     * Actualitza la simulació i la dibuixa
+     * 
+     * @param {number} currentTime - Temps actual en mil·lisegons
+     * 
+     * Aquesta funció és cridada repetidament per la funció requestAnimationFrame
+     * per tal de crear l'efecte d'animació
+     */
     animate(currentTime = 0) {
+        // Actualitza els FPS de la simulació
         this.updateFPS(currentTime);
         
+        // Si la simulació està en marxa, actualitza les velocitats dels cossos
+        // i els mou segons les noves velocitats
         if (this.isRunning) {
             this.updateVelocities();
             this.moveBodies();
