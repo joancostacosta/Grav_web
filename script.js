@@ -188,11 +188,9 @@ class GravitySimulator {
      */
     createBody(mass, x, y, vx, vy) {
 
-        // Ajustar les coordenades per l'efecte toroidal
-        if (x >= this.dimSpace.x) x -= this.dimSpace.x;
-        if (y >= this.dimSpace.y) y -= this.dimSpace.y;
-        if (x < 0) x += this.dimSpace.x;
-        if (y < 0) y += this.dimSpace.y;
+        // Ajustar les coordenades per l'efecte toroidal utilitzant l'operador %
+        x = ((x % this.dimSpace.x) + this.dimSpace.x) % this.dimSpace.x;
+        y = ((y % this.dimSpace.y) + this.dimSpace.y) % this.dimSpace.y;
 
         // Validar paràmetres de creació del cos
         if (mass <= 0) {
