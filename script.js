@@ -93,34 +93,73 @@ class GravitySimulator {
         
         // Gestió del paràmetre de gravetat
         const gVals = ['0.001','0.010','0.100','1.000'];
-        document.getElementById('paramG').addEventListener('input', (e) => {
-            const index = parseInt(e.target.value);
-            const output = document.getElementById('paramGValue');
-            if (output) { output.value = gVals[index]; }
-            this.G = parseFloat(gVals[index]);
-        });
+        const paramGInput = document.getElementById('paramG');
+        const paramGOutput = document.getElementById('paramGValue');
+
+        // Inicialitza el valor de l'output basant-se en el valor inicial del rang
+        if (paramGInput && paramGOutput) {
+            const initialIndex = parseInt(paramGInput.value);
+            paramGOutput.value = gVals[initialIndex];
+            this.G = parseFloat(gVals[initialIndex]); // També inicialitza la constant G
+        }
+
+        if (paramGInput) {
+            paramGInput.addEventListener('input', (e) => {
+                const index = parseInt(e.target.value);
+                if (paramGOutput) { paramGOutput.value = gVals[index]; }
+                this.G = parseFloat(gVals[index]);
+            });
+        }
         
         // Gestió del paràmetre de massa màxima
         const massVals = ["5000", "10000", "20000", "40000"];
-        document.getElementById('paramMassa').addEventListener('input', (e) => {
-            const index = parseInt(e.target.value);
-            const output = document.getElementById('paramMassaValue');
-            if (output) { output.value = massVals[index]; }
-            this.maxMass = parseInt(massVals[index], 10);
-        });
+        const paramMassaInput = document.getElementById('paramMassa');
+        const paramMassaOutput = document.getElementById('paramMassaValue');
+
+        // Inicialitza el valor de l'output basant-se en el valor inicial del rang
+        if (paramMassaInput && paramMassaOutput) {
+            const initialIndex = parseInt(paramMassaInput.value);
+            paramMassaOutput.value = massVals[initialIndex];
+            this.maxMass = parseInt(massVals[initialIndex], 10); // També inicialitza la massa màxima
+        }
+
+        if (paramMassaInput) {
+            document.getElementById('paramMassa').addEventListener('input', (e) => {
+                const index = parseInt(e.target.value);
+                const output = document.getElementById('paramMassaValue');
+                if (output) { output.value = massVals[index]; }
+                this.maxMass = parseInt(massVals[index], 10);
+            });
+        }
         
         // Gestió del paràmetre de densitat
         const densVals = ["0.01", "0.10", "1.00", "10.00", "100.00"];
-        document.getElementById('paramDens').addEventListener('input', (e) => {
-            const index = parseInt(e.target.value);
-            const output = document.getElementById('paramDensValue');
-            if (output) { output.value = densVals[index]; }
-            this.density = parseFloat(densVals[index]);
-            // Recalcular els radis de tots els cossos segons la nova densitat
+        const paramDensInput = document.getElementById('paramDens');
+        const paramDensOutput = document.getElementById('paramDensValue');
+
+        // Inicialitza el valor de l'output basant-se en el valor inicial del rang
+        if (paramDensInput && paramDensOutput) {
+            const initialIndex = parseInt(paramDensInput.value);
+            paramDensOutput.value = densVals[initialIndex];
+            this.density = parseFloat(densVals[initialIndex]); // També inicialitza la densitat
+            // Recalcular els radis de tots els cossos segons la nova densitat inicial
             this.bodies.forEach(body => {
                 body.radius = this.calculateRadius(body.mass);
             });
-        });
+        }
+
+        if (paramDensInput) {
+            document.getElementById('paramDens').addEventListener('input', (e) => {
+                const index = parseInt(e.target.value);
+                const output = document.getElementById('paramDensValue');
+                if (output) { output.value = densVals[index]; }
+                this.density = parseFloat(densVals[index]);
+                // Recalcular els radis de tots els cossos segons la nova densitat
+                this.bodies.forEach(body => {
+                    body.radius = this.calculateRadius(body.mass);
+                });
+            });
+        }
 
         // Esdeveniments del canvas
         this.canvas.addEventListener('click', (e) => this.handleClick(e));
