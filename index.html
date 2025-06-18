@@ -8,11 +8,11 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="mainContainer">
 
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
 
-            <div class="controls">
+            <div class="controls" id="controls">
                 <h2 id="titol">Simulador Gravitacional</h2>
                 <button class="control-btn" id="playBtn">▶ Iniciar</button>
                 <button class="control-btn step-btn" id="stepBtn">⏯ Pas a pas</button>
@@ -40,7 +40,8 @@
                 </div>         
             </div>
 
-            <div class="instruccions">
+            <button id="helpBtn" class="control-btn" style="width:40px; height:40px; border-radius:50%; font-size:1.5em; padding:0; margin: 10px auto; display:none;">?</button>
+            <div class="instruccions" id="instruccions">
                 <h3>Controls</h3>
                 <p><strong>Clic esquerre:</strong> Crear cos</p>
                 <p><strong>Clic dret:</strong> Iniciar/Parar</p>
@@ -53,7 +54,7 @@
 
         </div>
 
-        <div class="canvas-container">
+        <div class="canvas-container" id="canvasContainer">
             <canvas id="gravCanvas"></canvas>
         </div>
     </div>

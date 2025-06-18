@@ -585,6 +585,89 @@ class GravitySimulator {
     }
 }
 
+// --- Adaptació automàtica per a mòbil/tàctil ---
+function isMobileTouch() {
+    return (("ontouchstart" in window) || (navigator.maxTouchPoints > 0)) && window.innerWidth <= 900;
+}
+
+function reorganitzaPerMobil() {
+    const container = document.getElementById('mainContainer');
+    const sidebar = document.getElementById('sidebar');
+    const controls = document.getElementById('controls');
+    const canvasContainer = document.getElementById('canvasContainer');
+    const instruccions = document.getElementById('instruccions');
+    const helpBtn = document.getElementById('helpBtn');
+
+    if (isMobileTouch()) {
+        // Reorganitza layout: controls a baix, canvas ocupa tot
+        container.style.flexDirection = 'column';
+        sidebar.style.width = '100vw';
+        sidebar.style.maxWidth = '100vw';
+        sidebar.style.minWidth = 'unset';
+        sidebar.style.height = 'auto';
+        sidebar.style.order = '2';
+        canvasContainer.style.order = '1';
+        canvasContainer.style.height = 'calc(100vh - 80px)';
+        canvasContainer.style.width = '100vw';
+        canvasContainer.style.maxWidth = '100vw';
+        canvasContainer.style.maxHeight = '100vh';
+        canvasContainer.style.flex = 'unset';
+        // Controls petits
+        controls.style.flexDirection = 'row';
+        controls.style.flexWrap = 'wrap';
+        controls.style.justifyContent = 'center';
+        controls.style.alignItems = 'center';
+        controls.style.gap = '6px';
+        Array.from(controls.getElementsByClassName('control-btn')).forEach(btn => {
+            btn.style.width = '38px';
+            btn.style.height = '38px';
+            btn.style.fontSize = '1.1em';
+            btn.style.padding = '0';
+            btn.style.borderRadius = '50%';
+        });
+        // Substitueix instruccions per botó
+        if (instruccions) {
+            instruccions.style.display = 'none';
+            helpBtn.style.display = 'block';
+            helpBtn.onclick = function() {
+                alert(instruccions.innerText);
+            };
+        }
+    } else {
+        // Restaura layout d'escriptori
+        container.style.flexDirection = '';
+        sidebar.style.width = '';
+        sidebar.style.maxWidth = '';
+        sidebar.style.minWidth = '';
+        sidebar.style.height = '';
+        sidebar.style.order = '';
+        canvasContainer.style.order = '';
+        canvasContainer.style.height = '';
+        canvasContainer.style.width = '';
+        canvasContainer.style.maxWidth = '';
+        canvasContainer.style.maxHeight = '';
+        canvasContainer.style.flex = '';
+        controls.style.flexDirection = '';
+        controls.style.flexWrap = '';
+        controls.style.justifyContent = '';
+        controls.style.alignItems = '';
+        controls.style.gap = '';
+        Array.from(controls.getElementsByClassName('control-btn')).forEach(btn => {
+            btn.style.width = '';
+            btn.style.height = '';
+            btn.style.fontSize = '';
+            btn.style.padding = '';
+            btn.style.borderRadius = '';
+        });
+        if (instruccions) {
+            instruccions.style.display = 'block';
+            helpBtn.style.display = 'none';
+        }
+    }
+}
+window.addEventListener('load', reorganitzaPerMobil);
+window.addEventListener('resize', reorganitzaPerMobil);
+
 // Inicialitzar l'aplicació
 window.addEventListener('load', () => {
     new GravitySimulator();
