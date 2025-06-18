@@ -599,20 +599,19 @@ function reorganitzaPerMobil() {
     const helpBtn = document.getElementById('helpBtn');
 
     if (isMobileTouch()) {
-        // Reorganitza layout: controls a baix, canvas ocupa tot
-        container.style.flexDirection = 'column';
-        sidebar.style.width = '100vw';
-        sidebar.style.maxWidth = '100vw';
-        sidebar.style.minWidth = 'unset';
-        sidebar.style.height = 'auto';
-        sidebar.style.order = '2';
-        canvasContainer.style.order = '1';
-        canvasContainer.style.height = 'calc(100vh - 80px)';
-        canvasContainer.style.width = '100vw';
-        canvasContainer.style.maxWidth = '100vw';
-        canvasContainer.style.maxHeight = '100vh';
-        canvasContainer.style.flex = 'unset';
-        // Controls petits
+        // Sidebar a la part superior: assegura que sigui el primer fill de container
+        if (container.firstElementChild !== sidebar) {
+            container.insertBefore(sidebar, container.firstElementChild);
+        }
+        // Controls petits i helpBtn després de clearBtn
+        if (helpBtn && controls && !controls.contains(helpBtn)) {
+            const clearBtn = document.getElementById('clearBtn');
+            if (clearBtn && clearBtn.nextSibling) {
+                controls.insertBefore(helpBtn, clearBtn.nextSibling);
+            } else {
+                controls.appendChild(helpBtn);
+            }
+        }
         controls.style.flexDirection = 'row';
         controls.style.flexWrap = 'wrap';
         controls.style.justifyContent = 'center';
@@ -625,14 +624,36 @@ function reorganitzaPerMobil() {
             btn.style.padding = '0';
             btn.style.borderRadius = '50%';
         });
-        // Substitueix instruccions per botó
+        // Substitueix instruccions per botó i text específic per mòbil
         if (instruccions) {
+            instruccions.innerHTML = `
+                <h3>Controls (mòbil)</h3>
+                <p><strong>Toca el canvas:</strong> Crear cos</p>
+                <p><strong>Botó ▶/⏸:</strong> Iniciar/Parar simulació</p>
+                <p><strong>Botó 🗑:</strong> Netejar tots els cossos</p>
+                <p><strong>Botó ⏯:</strong> Un pas de simulació</p>
+                <p><strong>Botó ?:</strong> Mostra aquestes instruccions</p>
+                <p style="font-size:0.95em;color:#bbb;">(No s'apliquen clics de ratolí, ESC, Espai ni Mouse Over)</p>
+            `;
             instruccions.style.display = 'none';
             helpBtn.style.display = 'block';
             helpBtn.onclick = function() {
                 alert(instruccions.innerText);
             };
         }
+        // Layout general
+        container.style.flexDirection = 'column';
+        sidebar.style.order = '';
+        sidebar.style.width = '100vw';
+        sidebar.style.maxWidth = '100vw';
+        sidebar.style.minWidth = 'unset';
+        sidebar.style.height = 'auto';
+        canvasContainer.style.order = '';
+        canvasContainer.style.height = 'calc(100vh - 80px)';
+        canvasContainer.style.width = '100vw';
+        canvasContainer.style.maxWidth = '100vw';
+        canvasContainer.style.maxHeight = '100vh';
+        canvasContainer.style.flex = 'unset';
     } else {
         // Restaura layout d'escriptori
         container.style.flexDirection = '';
