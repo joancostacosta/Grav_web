@@ -14,9 +14,12 @@
 
             <div class="controls" id="controls">
                 <h2 id="titol">Simulador Gravitacional</h2>
-                <button class="control-btn" id="playBtn">▶ Iniciar</button>
-                <button class="control-btn step-btn" id="stepBtn">⏯ Pas a pas</button>
-                <button class="control-btn clear-btn" id="clearBtn">🗑 Netejar</button>
+                <div class="mobile-btn-row">
+                    <button class="control-btn" id="playBtn">▶ Iniciar</button>
+                    <button class="control-btn step-btn" id="stepBtn">⏯ Pas a pas</button>
+                    <button class="control-btn clear-btn" id="clearBtn">🗑 Netejar</button>
+                    <button id="helpBtn" class="control-btn" style="width:40px; height:40px; border-radius:50%; font-size:1.5em; padding:0; margin: 0; display:none;">?</button>
+                </div>
                 <div>   
                     <span id="statusTime">Inactiu</span>
                     <span id="fpsCounter">(0FPS)</span>
@@ -40,7 +43,6 @@
                 </div>         
             </div>
 
-            <button id="helpBtn" class="control-btn" style="width:40px; height:40px; border-radius:50%; font-size:1.5em; padding:0; margin: 10px auto; display:none;">?</button>
             <div class="instruccions" id="instruccions">
                 <h3>Controls</h3>
                 <p><strong>Clic esquerre:</strong> Crear cos</p>

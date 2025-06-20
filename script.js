@@ -87,7 +87,10 @@ class GravitySimulator {
      */
     setupEventListeners() {
         // Controls
-        document.getElementById('playBtn').addEventListener('click', () => this.toggleSimulation());
+        document.getElementById('playBtn').addEventListener('click', (e) => {
+            e.currentTarget.blur();
+            this.toggleSimulation();
+        });
         document.getElementById('clearBtn').addEventListener('click', () => this.clearAll());
         document.getElementById('stepBtn').addEventListener('click', () => this.stepSimulation());
         
@@ -592,6 +595,7 @@ function isMobileTouch() {
 
 function reorganitzaPerMobil() {
     const controls = document.getElementById('controls');
+    const playBtn = document.getElementById('playBtn');
     const instruccions = document.getElementById('instruccions');
     const helpBtn = document.getElementById('helpBtn');
 
@@ -661,11 +665,47 @@ function reorganitzaPerMobil() {
             helpBtn.style.display = 'none';
         }
     }
+    // Actualitza la icona i el color del playBtn en mode mòbil
+    function updatePlayBtnIcon() {
+        if (!playBtn) return;
+        if (isMobileTouch()) {
+            // L'estat actiu indica que el joc està en marxa (ha de mostrar ⏸ vermell)
+            if (playBtn.classList.contains('active')) {
+                playBtn.setAttribute('data-icon', '⏸');
+                playBtn.classList.remove('play-green');
+                playBtn.classList.add('pause-red');
+            } else {
+                playBtn.setAttribute('data-icon', '▶');
+                playBtn.classList.remove('pause-red');
+                playBtn.classList.add('play-green');
+            }
+            playBtn.textContent = '';
+        } else {
+            playBtn.textContent = playBtn.classList.contains('active') ? '⏸ Parar' : '▶ Iniciar';
+            playBtn.removeAttribute('data-icon');
+            playBtn.classList.remove('play-green', 'pause-red');
+        }
+    }
+    // Inicialitza l'estat correcte en mode mòbil
+    updatePlayBtnIcon();
+    // Observa canvis d'estat del botó (toggleSimulation també canvia l'estat)
+    playBtn && playBtn.addEventListener('click', function() {
+        setTimeout(updatePlayBtnIcon, 0);
+    });
 }
 window.addEventListener('load', reorganitzaPerMobil);
 window.addEventListener('resize', reorganitzaPerMobil);
 
-// Inicialitzar l'aplicació
+// Assegura que la variable gravitySim apunta a la instància de GravitySimulator
+let gravitySim;
 window.addEventListener('load', () => {
-    new GravitySimulator();
+    gravitySim = new GravitySimulator();
+    // Força la icona ▶ al playBtn en mode mòbil en carregar
+    const playBtn = document.getElementById('playBtn');
+    if (isMobileTouch() && playBtn) {
+        playBtn.setAttribute('data-icon', '▶');
+    }
 });
+
+// Modifica el CSS per mostrar la icona segons l'atribut data-icon
+// (Afegeix a style.css: #playBtn[data-icon]::after { content: attr(data-icon); ... })
