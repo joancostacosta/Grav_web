@@ -591,18 +591,11 @@ function isMobileTouch() {
 }
 
 function reorganitzaPerMobil() {
-    const container = document.getElementById('mainContainer');
-    const sidebar = document.getElementById('sidebar');
     const controls = document.getElementById('controls');
-    const canvasContainer = document.getElementById('canvasContainer');
     const instruccions = document.getElementById('instruccions');
     const helpBtn = document.getElementById('helpBtn');
 
     if (isMobileTouch()) {
-        // Sidebar a la part superior: assegura que sigui el primer fill de container
-        if (container.firstElementChild !== sidebar) {
-            container.insertBefore(sidebar, container.firstElementChild);
-        }
         // Controls petits i helpBtn després de clearBtn
         if (helpBtn && controls && !controls.contains(helpBtn)) {
             const clearBtn = document.getElementById('clearBtn');
@@ -641,33 +634,8 @@ function reorganitzaPerMobil() {
                 alert(instruccions.innerText);
             };
         }
-        // Layout general
-        container.style.flexDirection = 'column';
-        sidebar.style.order = '';
-        sidebar.style.width = '100vw';
-        sidebar.style.maxWidth = '100vw';
-        sidebar.style.minWidth = 'unset';
-        sidebar.style.height = 'auto';
-        canvasContainer.style.order = '';
-        canvasContainer.style.height = 'calc(100vh - 80px)';
-        canvasContainer.style.width = '100vw';
-        canvasContainer.style.maxWidth = '100vw';
-        canvasContainer.style.maxHeight = '100vh';
-        canvasContainer.style.flex = 'unset';
     } else {
         // Restaura layout d'escriptori
-        container.style.flexDirection = '';
-        sidebar.style.width = '';
-        sidebar.style.maxWidth = '';
-        sidebar.style.minWidth = '';
-        sidebar.style.height = '';
-        sidebar.style.order = '';
-        canvasContainer.style.order = '';
-        canvasContainer.style.height = '';
-        canvasContainer.style.width = '';
-        canvasContainer.style.maxWidth = '';
-        canvasContainer.style.maxHeight = '';
-        canvasContainer.style.flex = '';
         controls.style.flexDirection = '';
         controls.style.flexWrap = '';
         controls.style.justifyContent = '';
@@ -681,6 +649,14 @@ function reorganitzaPerMobil() {
             btn.style.borderRadius = '';
         });
         if (instruccions) {
+            instruccions.innerHTML = `
+                <h3>Controls</h3>
+                <p><strong>Clic esquerre:</strong> Crear cos</p>
+                <p><strong>Clic dret:</strong> Iniciar/Parar</p>
+                <p><strong>ESC:</strong> Netejar tot</p>
+                <p><strong>Espai:</strong> Un pas</p>
+                <p><strong>Mouse over:</strong> Info del cos</p>
+            `;
             instruccions.style.display = 'block';
             helpBtn.style.display = 'none';
         }
