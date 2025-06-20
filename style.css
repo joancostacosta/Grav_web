@@ -242,15 +242,18 @@ canvas {
     /* .mobile-btn-row .control-btn {
         margin: 0 !important;
     } */
+    #statusMouse {
+        display: none !important;
+    }
 }
 
 #helpBtn {
     display: none;
     position: relative;
-    background: linear-gradient(45deg, #4CAF50, #45a049);
-    color: white;
+    background: linear-gradient(45deg, #FFD600, #FFB300);
+    color: #333;
     border: none;
-    box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
+    box-shadow: 0 2px 10px rgba(255, 214, 0, 0.3);
     cursor: pointer;
     z-index: 10;
 }
