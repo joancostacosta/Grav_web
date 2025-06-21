@@ -658,15 +658,16 @@ function reorganitzaPerMobil() {
             instruccions.innerHTML = `
                 <h3>Controls</h3>
                 <br>
-                <p><strong>Toca el canvas:</strong> Crear cos</p>
-                <p><strong>Botó ▶/⏸:</strong> Iniciar/Parar simulació</p>
-                <p><strong>Botó ⏯:</strong> Un pas de simulació</p>
-                <p><strong>Botó 🗑:</strong> Netejar tots els cossos</p>
+                <p><bold>Toca el canvas:</bold> Crear cos</p>
+                <p><bold>Manté el dit en canvas:</bold> Iniciar/Parar simulació</p>
+                <p><bold>Botó ▶/⏸:</bold> Iniciar/Parar simulació</p>
+                <p><bold>Botó ⏯:</bold> Un pas de simulació</p>
+                <p><bold>Botó 🗑:</bold> Netejar tots els cossos</p>
             `;
             instruccions.style.display = 'none';
             helpBtn.style.display = 'block';
             helpBtn.onclick = function() {
-                mostraOverlayInstruccions(instruccions.innerText);
+                mostraOverlayInstruccions(instruccions.innerHTML);
             };
         }
     } else {
