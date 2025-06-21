@@ -261,7 +261,7 @@ canvas {
         align-items: center !important;
         /*gap: 10px !important;*/
         width: 100%;
-        margin-bottom: 2px !important;
+        margin-bottom: 4px !important; /* Redueix la distància amb status-row-mobile */
     }
     /* .mobile-btn-row .control-btn {
         margin: 0 !important;
@@ -280,6 +280,7 @@ canvas {
         gap: 8px;
         width: 100%;
         min-height: 38px;
+        margin-bottom: 6px !important; /* Espai abans dels paràmetres */
     }
     #statusTime, #fpsCounter, #statusBodies {
         display: inline-flex;
@@ -290,6 +291,14 @@ canvas {
     }
     .copyright-line, .sidebar > a {
         display: none !important;
+    }
+    /* Controls de paràmetres: puja'ls una mica i afegeix més marge a l'últim */
+    .controls > div[title] {
+        margin-top: 2px !important;
+        margin-bottom: 2px !important;
+    }
+    .controls > div[title]:last-of-type {
+        margin-bottom: 14px !important;
     }
 }
 
