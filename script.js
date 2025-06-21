@@ -593,6 +593,38 @@ function isMobileTouch() {
     return (("ontouchstart" in window) || (navigator.maxTouchPoints > 0)) && window.innerWidth <= 900;
 }
 
+function mostraOverlayInstruccions(text) {
+    let overlay = document.getElementById('mobileInstructionsOverlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'mobileInstructionsOverlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = 'rgba(30,30,30,0.95)';
+        overlay.style.color = '#fff';
+        overlay.style.display = 'flex';
+        overlay.style.flexDirection = 'column';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.zIndex = 9999;
+        overlay.style.fontSize = '1.1em';
+        overlay.style.padding = '24px';
+        overlay.style.textAlign = 'center';
+        overlay.style.cursor = 'pointer';
+        overlay.innerHTML = `<div style='max-width: 90vw; max-height: 80vh; overflow-y: auto;'>${text.replace(/\n/g,'<br>')}</div><div style='margin-top:2em;font-size:0.95em;color:#FFD600;'>Toca per tancar</div>`;
+        overlay.onclick = function() {
+            overlay.style.display = 'none';
+        };
+        document.body.appendChild(overlay);
+    } else {
+        overlay.innerHTML = `<div style='max-width: 90vw; max-height: 80vh; overflow-y: auto;'>${text.replace(/\n/g,'<br>')}</div><div style='margin-top:2em;font-size:0.95em;color:#FFD600;'>Toca per tancar</div>`;
+        overlay.style.display = 'flex';
+    }
+}
+
 function reorganitzaPerMobil() {
     const controls = document.getElementById('controls');
     const playBtn = document.getElementById('playBtn');
@@ -624,18 +656,17 @@ function reorganitzaPerMobil() {
         // Substitueix instruccions per botó i text específic per mòbil
         if (instruccions) {
             instruccions.innerHTML = `
-                <h3>Controls (mòbil)</h3>
+                <h3>Controls</h3>
+                <br>
                 <p><strong>Toca el canvas:</strong> Crear cos</p>
                 <p><strong>Botó ▶/⏸:</strong> Iniciar/Parar simulació</p>
-                <p><strong>Botó 🗑:</strong> Netejar tots els cossos</p>
                 <p><strong>Botó ⏯:</strong> Un pas de simulació</p>
-                <p><strong>Botó ?:</strong> Mostra aquestes instruccions</p>
-                <p style="font-size:0.95em;color:#bbb;">(No s'apliquen clics de ratolí, ESC, Espai ni Mouse Over)</p>
+                <p><strong>Botó 🗑:</strong> Netejar tots els cossos</p>
             `;
             instruccions.style.display = 'none';
             helpBtn.style.display = 'block';
             helpBtn.onclick = function() {
-                alert(instruccions.innerText);
+                mostraOverlayInstruccions(instruccions.innerText);
             };
         }
     } else {
