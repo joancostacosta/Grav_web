@@ -259,9 +259,9 @@ canvas {
         flex-direction: row !important;
         justify-content: space-evenly !important;
         align-items: center !important;
-        /*gap: 10px !important;*/
+        margin-top: 6px !important; /* Espai respecte el títol */
+        margin-bottom: 2px !important; /* Espai respecte status-row-mobile */
         width: 100%;
-        margin-bottom: 4px !important; /* Redueix la distància amb status-row-mobile */
     }
     /* .mobile-btn-row .control-btn {
         margin: 0 !important;
