@@ -165,11 +165,14 @@ class GravitySimulator {
         }
 
         // Esdeveniments del canvas
-        this.canvas.addEventListener('click', (e) => this.handleClick(e));
+        // Clic esquerre o toc en pantalla per crear un cos
+        this.canvas.addEventListener('click', (e) => this.handleClick(e)); 
+        // Clic dret o mantenir dit en pantalla per iniciar/parar la simulació 
         this.canvas.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             this.toggleSimulation();
         });
+        // Moviment del ratolí per mostrar informació del cos
         this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
 
         // Esdeveniments del teclat
