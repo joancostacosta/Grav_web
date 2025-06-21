@@ -316,3 +316,7 @@ canvas {
 body, html {
     overflow-x: hidden !important;
 }
+
+#fpsCounter {
+    display: none !important;
+}
