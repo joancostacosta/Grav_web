@@ -534,6 +534,7 @@ class GravitySimulator {
         this.isRunning = !this.isRunning;
         document.getElementById('playBtn').textContent = this.isRunning ? '⏸ Parar' : '▶ Iniciar';
         document.getElementById('playBtn').classList.toggle('active', this.isRunning);
+        window.updatePlayBtnIcon();
         this.updateStatus();
     }
 
@@ -545,6 +546,7 @@ class GravitySimulator {
         this.isRunning = false;
         document.getElementById('playBtn').textContent = '▶ Iniciar';
         document.getElementById('playBtn').classList.remove('active');
+        window.updatePlayBtnIcon();
         this.updateVelocities();
         this.moveBodies();
         this.mergeBodies();
@@ -561,6 +563,7 @@ class GravitySimulator {
         this.isRunning = false;
         document.getElementById('playBtn').textContent = '▶ Iniciar';
         document.getElementById('playBtn').classList.remove('active');
+        window.updatePlayBtnIcon();
         this.updateStatus();
     }
 
@@ -701,32 +704,7 @@ function reorganitzaPerMobil() {
         }
     }
     // Actualitza la icona i el color del playBtn en mode mòbil
-    function updatePlayBtnIcon() {
-        if (!playBtn) return;
-        if (isMobileTouch()) {
-            // L'estat actiu indica que el joc està en marxa (ha de mostrar ⏸ vermell)
-            if (playBtn.classList.contains('active')) {
-                playBtn.setAttribute('data-icon', '⏸');
-                playBtn.classList.remove('play-green');
-                playBtn.classList.add('pause-red');
-            } else {
-                playBtn.setAttribute('data-icon', '▶');
-                playBtn.classList.remove('pause-red');
-                playBtn.classList.add('play-green');
-            }
-            playBtn.textContent = '';
-        } else {
-            playBtn.textContent = playBtn.classList.contains('active') ? '⏸ Parar' : '▶ Iniciar';
-            playBtn.removeAttribute('data-icon');
-            playBtn.classList.remove('play-green', 'pause-red');
-        }
-    }
-    // Inicialitza l'estat correcte en mode mòbil
-    updatePlayBtnIcon();
-    // Observa canvis d'estat del botó (toggleSimulation també canvia l'estat)
-    playBtn && playBtn.addEventListener('click', function() {
-        setTimeout(updatePlayBtnIcon, 0);
-    });
+    window.updatePlayBtnIcon();
 }
 window.addEventListener('load', reorganitzaPerMobil);
 window.addEventListener('resize', reorganitzaPerMobil);
@@ -741,6 +719,28 @@ window.addEventListener('load', () => {
         playBtn.setAttribute('data-icon', '▶');
     }
 });
+
+// --- Funció global per actualitzar la icona i color del playBtn ---
+window.updatePlayBtnIcon = function() {
+    const playBtn = document.getElementById('playBtn');
+    if (!playBtn) return;
+    if (isMobileTouch()) {
+        if (playBtn.classList.contains('active')) {
+            playBtn.setAttribute('data-icon', '⏸');
+            playBtn.classList.remove('play-green');
+            playBtn.classList.add('pause-red');
+        } else {
+            playBtn.setAttribute('data-icon', '▶');
+            playBtn.classList.remove('pause-red');
+            playBtn.classList.add('play-green');
+        }
+        playBtn.textContent = '';
+    } else {
+        playBtn.textContent = playBtn.classList.contains('active') ? '⏸ Parar' : '▶ Iniciar';
+        playBtn.removeAttribute('data-icon');
+        playBtn.classList.remove('play-green', 'pause-red');
+    }
+};
 
 // Modifica el CSS per mostrar la icona segons l'atribut data-icon
 // (Afegeix a style.css: #playBtn[data-icon]::after { content: attr(data-icon); ... })
