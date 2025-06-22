@@ -441,7 +441,8 @@ class GravitySimulator {
         // Elimina el cos original
         this.bodies.splice(index, 1);
 
-        // Dividir el cercle segons els sectors i crear cada fragment
+        // Primer pas: calcula masses, velocitats i posicions dels fragments
+        let fragments = [];
         let currentAngle = 0;
         for (let i = 0; i < N; i++) {
             const theta = sectors[i]; // Angle del sector
@@ -450,7 +451,6 @@ class GravitySimulator {
             const fragMass = (theta / (2 * Math.PI)) * distributedMass;
             // Determinar la velocitat d'escapament: KE = 1/2 * m * v²  => v = sqrt(2*KE/m)
             const fragSpeed = fragMass > 0 ? Math.sqrt((2 * energyPerFragment) / fragMass) : 0;
-            //console.log(`Fragment ${i + 1}: massa=${fragMass.toFixed(2)}, velocitat=${fragSpeed.toFixed(2)}`);
             // Posicionar el fragment amb un offset per evitar superposició
             const offsetDist = body.radius * 3 + fragSpeed;
             let fragX = body.x + offsetDist * Math.cos(bisector);
@@ -458,10 +458,39 @@ class GravitySimulator {
             // Ajustar les coordenades per l'efecte toroidal
             fragX = ((fragX % this.dimSpace.x) + this.dimSpace.x) % this.dimSpace.x;
             fragY = ((fragY % this.dimSpace.y) + this.dimSpace.y) % this.dimSpace.y;
-            const fragVx = body.vx + fragSpeed * Math.cos(bisector);
-            const fragVy = body.vy + fragSpeed * Math.sin(bisector);
-            this.createBody(fragMass, fragX, fragY, fragVx, fragVy);
+            // Velocitat inicial del fragment
+            let fragVx = body.vx + fragSpeed * Math.cos(bisector);
+            let fragVy = body.vy + fragSpeed * Math.sin(bisector);
+            fragments.push({
+                mass: fragMass,
+                x: fragX,
+                y: fragY,
+                vx: fragVx,
+                vy: fragVy
+            });
             currentAngle += theta;
+        }
+        // Segon pas: ajust de moment lineal total
+        // Calcula moment lineal total dels fragments
+        let Px = 0, Py = 0, M = 0;
+        for (let f of fragments) {
+            Px += f.mass * f.vx;
+            Py += f.mass * f.vy;
+            M += f.mass;
+        }
+        // Moment lineal original
+        const Px0 = body.mass * body.vx;
+        const Py0 = body.mass * body.vy;
+        // Diferència
+        const dPx = Px0 - Px;
+        const dPy = Py0 - Py;
+        // Corregir velocitat de tots els fragments
+        const dvx = dPx / M;
+        const dvy = dPy / M;
+        for (let f of fragments) {
+            f.vx += dvx;
+            f.vy += dvy;
+            this.createBody(f.mass, f.x, f.y, f.vx, f.vy);
         }
         this.updateStatus();
     }
