@@ -5,7 +5,7 @@
     box-sizing: border-box;
 }
 
-/* Configuració del cos de la pàgina */
+/* Cos de la pàgina */
 body {
     font-family: Arial, sans-serif;
     background-color: #333;
@@ -14,14 +14,14 @@ body {
     height: 100vh;
 }
 
-/* Contenidor principal de la pàgina */
+/* Contenidor principal */
 .container {
     display: flex;
     flex-direction: row;
     height: 100%;
 }
 
-/* Estil base per a tots els botons de control */
+/* Botons de control (escriptori) */
 .control-btn {
     width: 200px;
     border: none;
@@ -60,7 +60,7 @@ body {
     box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
 }
 
-/* Barra lateral de controls */
+/* Sidebar de controls (escriptori) */
 .sidebar {
     width: 400px;
     display: flex;
@@ -117,7 +117,7 @@ canvas {
     margin-bottom: 12px;
 }
 
-/* Pàrrofes d'instruccions */
+/* Pàrrafs d'instruccions */
 .instruccions p {
     margin: 8px 0;
 }
@@ -142,7 +142,7 @@ canvas {
     text-align: center;
 }
 
-/* Adaptació per a dispositius mòbils amb pantalla petita i entrada tàctil */
+/* --- Mode mòbil --- */
 @media (max-width: 900px) and (pointer: coarse) {
     /* El contenidor principal passa a disposició vertical */
     .container {
@@ -169,16 +169,7 @@ canvas {
         padding-top: 0 !important;
     }
     .sidebar > a {
-        position: absolute;
-        left: 50%;
-        bottom: 10px;
-        transform: translateX(-50%);
-        width: max-content;
-        margin: 0;
-        font-size: 0.95em;
-        color: #ccc;
-        text-align: center;
-        pointer-events: none;
+        display: none !important;
     }
     /* El canvas ocupa la resta de la pantalla */
     .canvas-container {
@@ -245,32 +236,17 @@ canvas {
     #playBtn.pause-red {
         background: linear-gradient(45deg, #ff6b6b, #ee5a52) !important;
     }
-    /* Elimina focus visuals innecessaris en mòbil */
-    /* #playBtn:focus::after,
-    #playBtn[data-icon]:focus::after {
-        outline: none !important;
-        box-shadow: none !important;
-        filter: none !important;
-        background: none !important;
-    } */
-    /* Fila de botons per a la disposició mòbil */
     .mobile-btn-row {
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-evenly !important;
         align-items: center !important;
-        margin-top: 6px !important; /* Espai respecte el títol */
-        margin-bottom: 2px !important; /* Espai respecte status-row-mobile */
+        margin-top: 10px !important;
+        margin-bottom: 6px !important;
         width: 100%;
     }
-    /* .mobile-btn-row .control-btn {
-        margin: 0 !important;
-    } */
     #statusMouse {
         display: none !important;
-    }
-    .controls > div:nth-of-type(2) {
-        margin-top: 2px !important;
     }
     .status-row-mobile {
         display: flex;

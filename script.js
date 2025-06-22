@@ -1,7 +1,7 @@
+// GravitySimulator: simulador de gravetat 2D amb controls i canvas responsiu
 class GravitySimulator {
     /**
-     * Constructor de la classe GravitySimulator
-     * Inicialitza els paràmetres de la simulació i els esdeveniments
+     * Constructor: inicialitza la simulació i events
      */
     constructor() {
         this.canvas = document.getElementById('gravCanvas');
@@ -38,8 +38,8 @@ class GravitySimulator {
     }
 
     /**
-     * Configura el canvas i el seu comportament de redimensionament
-     * Manté la proporció del canvas i escala els cossos adequadament
+     * Configura el canvas i el seu redimensionament
+     * Manté la proporció i escala els cossos
      */
     setupCanvas() {
         const container = document.querySelector('.canvas-container');
@@ -77,13 +77,7 @@ class GravitySimulator {
     }
 
     /**
-     * Configura tots els esdeveniments d'interacció:
-     * - Boto de reproducció/pausa
-     * - Boto de netejar
-     * - Boto de pas a pas
-     * - Paràmetres de gravetat, massa màxima i densitat
-     * - Esdeveniments del canvas (clic, moviment del ratolí)
-     * - Esdeveniments del teclat (ESC, Espai)
+     * Configura esdeveniments d'interacció i paràmetres
      */
     setupEventListeners() {
         // Controls
@@ -295,7 +289,7 @@ class GravitySimulator {
     }
 
     /**
-     * Actualitza les velocitats de tots els cossos
+     * Actualitza les velocitats de tots els cossos (força gravitatòria)
      * Aplica la força gravitacional entre tots els cossos
      */
     updateVelocities() {
@@ -322,7 +316,7 @@ class GravitySimulator {
     }
 
     /**
-     * Mou tots els cossos segons les seves velocitats
+     * Mou tots els cossos segons velocitat i efecte toroidal
      * Aplica l'efecte toroidal quan els cossos surten del canvas
      */
     moveBodies() {
@@ -355,7 +349,7 @@ class GravitySimulator {
     }
 
     /**
-     * Fusiona els cossos que s'enganxen
+     * Fusiona els cossos que s'enganxen (conservació de massa i moment lineal)
      * Conserva la massa total i el moment lineal
      */
     mergeBodies() {
@@ -414,7 +408,7 @@ class GravitySimulator {
     }
 
     /**
-     * Lògica de l'explosió d'un cos.
+     * Lògica de l'explosió d'un cos: genera fragments i ajusta moment lineal
      * @param {number} index - L'índex del cos a explotar a l'array this.bodies.
      */
     explodeBody(index) {
@@ -484,7 +478,7 @@ class GravitySimulator {
         // Diferència
         const dPx = Px0 - Px;
         const dPy = Py0 - Py;
-        // Corregir velocitat de tots els fragments
+        // Corregir velocitat de tots els fragments per compensar la diferència de moment lineal
         const dvx = dPx / M;
         const dvy = dPy / M;
         for (let f of fragments) {
@@ -597,7 +591,7 @@ class GravitySimulator {
     }
 
     /**
-     * Funció principal d'animació
+     * Funció principal d'animació (requestAnimationFrame)
      * Actualitza la simulació i la dibuixa
      * 
      * @param {number} currentTime - Temps actual en mil·lisegons
@@ -623,11 +617,14 @@ class GravitySimulator {
     }
 }
 
-// --- Adaptació automàtica per a mòbil/tàctil ---
+// --- Utilitats i adaptació mòbil ---
 function isMobileTouch() {
     return (("ontouchstart" in window) || (navigator.maxTouchPoints > 0)) && window.innerWidth <= 900;
 }
 
+/**
+ * Mostra overlay d'instruccions en mode mòbil
+ */
 function mostraOverlayInstruccions(text) {
     let overlay = document.getElementById('mobileInstructionsOverlay');
     if (!overlay) {
@@ -660,6 +657,9 @@ function mostraOverlayInstruccions(text) {
     }
 }
 
+/**
+ * Reorganitza controls i instruccions segons dispositiu
+ */
 function reorganitzaPerMobil() {
     const controls = document.getElementById('controls');
     const playBtn = document.getElementById('playBtn');
@@ -770,6 +770,3 @@ window.updatePlayBtnIcon = function() {
         playBtn.classList.remove('play-green', 'pause-red');
     }
 };
-
-// Modifica el CSS per mostrar la icona segons l'atribut data-icon
-// (Afegeix a style.css: #playBtn[data-icon]::after { content: attr(data-icon); ... })
