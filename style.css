@@ -27,13 +27,20 @@ body {
     border: none;
     padding: 8px 16px;
     margin-bottom: 15px;
-    border-radius: 20px;
+    border-radius: 5px;
     color: white;
     cursor: pointer;
     font-weight: 500;
     transition: all 0.3s ease;
     box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
     background: linear-gradient(45deg, #4CAF50, #45a049);
+}
+
+/* Augmenta la mida del text dels botons de control només en mode escriptori */
+@media (min-width: 901px), (pointer: fine) {
+  .control-btn {
+    font-size: 1.0em;
+  }
 }
 
 /* Estil dels botons de control en hover */
@@ -140,6 +147,21 @@ canvas {
     background-color: #333;
     gap: 15px;
     text-align: center;
+}
+
+/* Augmenta el padding superior i inferior de .controls només en mode escriptori */
+@media (min-width: 901px), (pointer: fine) {
+  .controls {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+}
+
+/* Augmenta el padding superior de .instruccions només en mode escriptori */
+@media (min-width: 901px), (pointer: fine) {
+  .instruccions {
+    padding-top: 20px;
+  }
 }
 
 /* --- Mode mòbil --- */
@@ -295,4 +317,9 @@ body, html {
 
 #fpsCounter {
     display: none !important;
+}
+
+/* Redueix l'espai sota la fila de botons en mode escriptori */
+.mobile-btn-row {
+    margin-bottom: -14px;
 }
