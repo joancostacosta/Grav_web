@@ -14,32 +14,32 @@
 
             <div class="controls" id="controls">
                 <div><h2 id="titol">PlaniGrav</h2><span>Simulador gravitacional</span></div>
-                <div class="mobile-btn-row">
+                <div class="btn-row">
                     <button class="control-btn" id="playBtn">▶ Iniciar</button>
                     <button class="control-btn step-btn" id="stepBtn">⏯ Pas a pas</button>
                     <button class="control-btn clear-btn" id="clearBtn">🗑 Netejar</button>
-                    <button id="helpBtn" class="control-btn" style="width:40px; height:40px; border-radius:50%; font-size:1.5em; padding:0; margin: 0; display:none;">?</button>
+                    <button id="helpBtn" class="control-btn">?</button>
                 </div>
-                <div class="status-row-mobile">   
+                <div class="status-row">   
                     <span id="statusTime">Inactiu</span>
                     <span id="fpsCounter">(0FPS)</span>
                     <span id="statusBodies">#Cossos: 0 | Massa total: 0</span>
                 </div>
                 <div id="statusMouse">Posició: x=0 y=0</div>
-                <div style="display: flex; align-items: center; gap: 8px;" title="Intensitat de la gravetat">
-                    <label for="paramG" style="margin: 0;">Intensitat gravetat</label>
+                <div title="Intensitat de la gravetat">
+                    <label for="paramG">Intensitat gravetat</label>
                     <input type="range" id="paramG" min="0" max="3" step="1" value="1">
-                    <output id="paramGValue" style="margin: 0;"></output>
+                    <output id="paramGValue"></output>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;" title="Massa màxima que pot tenir un cos sense explotar">
-                    <label for="paramMassa" style="margin: 0;">Massa màx.</label>
+                <div title="Massa màxima que pot tenir un cos sense explotar">
+                    <label for="paramMassa">Massa màx.</label>
                     <input type="range" id="paramMassa" min="0" max="3" step="1" value="1">
-                    <output id="paramMassaValue" style="margin: 0;"></output>
+                    <output id="paramMassaValue"></output>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;" title="Densitat dels cossos, afecta a la mida">
-                    <label for="paramDens" style="margin: 0;">Densitat cossos</label>
+                <div title="Densitat dels cossos, afecta a la mida">
+                    <label for="paramDens">Densitat cossos</label>
                     <input type="range" id="paramDens" min="0" max="4" step="1" value="2">
-                    <output id="paramDensValue" style="margin: 0;"></output>
+                    <output id="paramDensValue"></output>
                 </div>         
             </div>
 
@@ -52,7 +52,7 @@
                 <p><strong>Mouse over:</strong> Info del cos</p>
             </div>
 
-            <a style="font-size: 0.9em; color: #ccc;">&copy; PlaniSoftware 2025</a>
+            <a>&copy; PlaniSoftware 2025</a>
 
         </div>
 

@@ -1,27 +1,28 @@
-/* Estils generals */
+/* Cos i html: estils globals per a tota la pàgina (tots els modes) */
+body, html {
+    font-family: Arial, sans-serif;
+    background-color: #333;
+    color: white;
+    overflow: hidden;
+    overflow-x: hidden !important;
+    height: 100vh;
+}
+
+/* Tots els elements: reset de marges, padding i box-sizing (tots els modes) */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Cos de la pàgina */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #333;
-    color: white;
-    overflow: hidden;
-    height: 100vh;
-}
-
-/* Contenidor principal */
+/* Contenidor principal: layout horitzontal (tots els modes, excepte mobile) */
 .container {
     display: flex;
     flex-direction: row;
     height: 100%;
 }
 
-/* Botons de control (escriptori) */
+/* Botons de control: estil general (escriptori) */
 .control-btn {
     width: 200px;
     border: none;
@@ -36,38 +37,26 @@ body {
     background: linear-gradient(45deg, #4CAF50, #45a049);
 }
 
-/* Augmenta la mida del text dels botons de control només en mode escriptori */
-@media (min-width: 901px), (pointer: fine) {
-  .control-btn {
-    font-size: 1.0em;
-  }
-}
-
-/* Estil dels botons de control en hover */
+/* Botons de control: efectes hover (escriptori) */
 .control-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
 }
 
-/* Estil dels botons de control quan estan actius */
-.control-btn.active {
-    background: linear-gradient(45deg, #ff6b6b, #ee5a52);
-    box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
-}
-
-/* Estil del botó de netejar */
+/* Botons de control actius i botó de netejar: color de fons especial (escriptori) */
+.control-btn.active,
 .clear-btn {
     background: linear-gradient(45deg, #ff6b6b, #ee5a52);
     box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
 }
 
-/* Estil del botó de pas a pas */
+/* Botó pas a pas: color de fons especial (escriptori) */
 .step-btn {
     background: linear-gradient(45deg, #9f6bff, #4213ec);
     box-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
 }
 
-/* Sidebar de controls (escriptori) */
+/* Barra lateral: layout i estil (escriptori) */
 .sidebar {
     width: 400px;
     display: flex;
@@ -80,7 +69,7 @@ body {
     max-height: 100vh;
 }
 
-/* Contenidor del canvas */
+/* Contenidor del canvas: centra el canvas (tots els modes) */
 .canvas-container {
     flex: 1;
     position: relative;
@@ -91,7 +80,7 @@ body {
     overflow: hidden;
 }
 
-/* Canvas de la simulació */
+/* Canvas: ocupa tot l'espai disponible (tots els modes) */
 canvas {
     display: block;
     width: 100%;
@@ -100,17 +89,17 @@ canvas {
     cursor: crosshair;
 }
 
-/* Títol de la simulació */
+/* Títol principal (tots els modes) */
 #titol {
     text-align: center;
     color: white;
 }
 
-/* Secció d'instruccions */
+/* Bloc d'instruccions: estil general (escriptori) */
 .instruccions {
     display: block;
     background-color: #333;
-    padding: 15px;
+    padding: 15px 0 15px 0;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
     margin-bottom: 0;
@@ -119,24 +108,24 @@ canvas {
     text-align: center;
 }
 
-/* Títol de les instruccions */
+/* Títol d'instruccions (tots els modes) */
 .instruccions h3 {
     margin-bottom: 12px;
 }
 
-/* Pàrrafs d'instruccions */
+/* Paràgrafs d'instruccions (tots els modes) */
 .instruccions p {
     margin: 8px 0;
 }
 
-/* Estils per als comptadors i estadístiques */
+/* Comptadors i estadístiques (tots els modes) */
 #fpsCounter, #statusTime, #statusBodies, #statusMouse {
     font-size: 12px;
     font-weight: 500;
     font-family: inherit;
 }
 
-/* Contenidor de controls */
+/* Contenidor de controls: layout i estil (escriptori) */
 .controls {
     padding: 10px;
     border-radius: 8px;
@@ -149,16 +138,38 @@ canvas {
     text-align: center;
 }
 
-/* Augmenta el padding superior i inferior de .controls només en mode escriptori */
+/* Controls de paràmetres: layout i marges (tots els modes) */
+.controls > div[title] {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.controls > div[title]:last-of-type {
+    margin-bottom: 14px;
+}
+.controls > div[title] label,
+.controls > div[title] output {
+    margin: 0;
+}
+
+/* Copyright: estil de text (tots els modes) */
+.sidebar > a,
+.copyright-line {
+    font-size: 0.9em;
+    color: #ccc;
+}
+
+/* Augmenta la mida del text dels botons de control (només escriptori) */
 @media (min-width: 901px), (pointer: fine) {
+  .control-btn {
+    font-size: 1.0em;
+  }
   .controls {
     padding-top: 20px;
     padding-bottom: 20px;
   }
-}
-
-/* Augmenta el padding superior de .instruccions només en mode escriptori */
-@media (min-width: 901px), (pointer: fine) {
   .instruccions {
     padding-top: 20px;
   }
@@ -166,12 +177,12 @@ canvas {
 
 /* --- Mode mòbil --- */
 @media (max-width: 900px) and (pointer: coarse) {
-    /* El contenidor principal passa a disposició vertical */
+    /* Contenidor principal: layout vertical (mobile) */
     .container {
         flex-direction: column !important;
         height: 100vh;
     }
-    /* La barra lateral ocupa tota l'amplada a la part superior */
+    /* Barra lateral: ocupa tota l'amplada a dalt (mobile) */
     .sidebar {
         width: 100vw !important;
         max-width: 100vw !important;
@@ -190,10 +201,11 @@ canvas {
         flex-shrink: 0 !important;
         padding-top: 0 !important;
     }
+    /* Amaga copyright (mobile) */
     .sidebar > a {
         display: none !important;
     }
-    /* El canvas ocupa la resta de la pantalla */
+    /* Canvas ocupa la resta de la pantalla (mobile) */
     .canvas-container {
         order: 1 !important;
         width: 100vw !important;
@@ -204,7 +216,7 @@ canvas {
         height: auto !important;
         display: flex !important;
     }
-    /* Els controls es mostren en fila i s'ajusten */
+    /* Controls: layout horitzontal i compacte (mobile) */
     .controls {
         flex-direction: row !important;
         flex-wrap: wrap !important;
@@ -214,7 +226,7 @@ canvas {
         padding: 4px !important;
         margin-top: 0 !important;
     }
-    /* Botons rodons i petits amb icona centrada */
+    /* Botons de control: rodons i petits (mobile) */
     .control-btn {
         width: 38px !important;
         height: 38px !important;
@@ -229,12 +241,11 @@ canvas {
         position: relative;
         margin: 0 !important;
     }
-    /* Icones per als botons */
+    /* Icones per als botons (mobile) */
     #playBtn::after { content: '▶'; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); text-indent: 0; }
     #stepBtn::after { content: '⏯'; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); text-indent: 0; }
     #clearBtn::after { content: '🗑'; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); text-indent: 0; }
     #helpBtn::after { content: '?'; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); text-indent: 0; }
-    /* Icona dinàmica pel play segons l'atribut data-icon */
     #playBtn[data-icon]::after {
         content: attr(data-icon);
         position: absolute;
@@ -243,22 +254,23 @@ canvas {
         transform: translate(-50%,-50%);
         text-indent: 0;
     }
-    /* Amaga instruccions per estalviar espai */
+    /* Amaga instruccions (mobile) */
     .instruccions {
         display: none !important;
     }
-    /* Mostra el botó d'ajuda */
+    /* Mostra el botó d'ajuda (mobile) */
     #helpBtn {
         display: block !important;
     }
-    /* Colors de fons segons l'estat del play */
+    /* Colors de fons segons estat del play (mobile) */
     #playBtn.play-green {
         background: linear-gradient(45deg, #4CAF50, #45a049) !important;
     }
     #playBtn.pause-red {
         background: linear-gradient(45deg, #ff6b6b, #ee5a52) !important;
     }
-    .mobile-btn-row {
+    /* Fila de botons: layout compacte (tots els modes, s'anomena .btn-row) */
+    .btn-row {
         display: flex !important;
         flex-direction: row !important;
         justify-content: space-evenly !important;
@@ -267,10 +279,12 @@ canvas {
         margin-bottom: 6px !important;
         width: 100%;
     }
+    /* Amaga info de ratolí (mobile) */
     #statusMouse {
         display: none !important;
     }
-    .status-row-mobile {
+    /* Fila d'estat: layout compacte (mobile) */
+    .status-row {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -278,8 +292,9 @@ canvas {
         gap: 8px;
         width: 100%;
         min-height: 38px;
-        margin-bottom: 6px !important; /* Espai abans dels paràmetres */
+        margin-bottom: 6px !important;
     }
+    /* Comptadors d'estat: estil més gran (mobile) */
     #statusTime, #fpsCounter, #statusBodies {
         display: inline-flex;
         align-items: center;
@@ -287,19 +302,13 @@ canvas {
         font-size: 14px;
         font-family: inherit;
     }
+    /* Amaga copyright (mobile) */
     .copyright-line, .sidebar > a {
         display: none !important;
     }
-    /* Controls de paràmetres: puja'ls una mica i afegeix més marge a l'últim */
-    .controls > div[title] {
-        margin-top: 2px !important;
-        margin-bottom: 2px !important;
-    }
-    .controls > div[title]:last-of-type {
-        margin-bottom: 14px !important;
-    }
 }
 
+/* Botó d'ajuda: estil general (tots els modes) */
 #helpBtn {
     display: none;
     position: relative;
@@ -309,17 +318,20 @@ canvas {
     box-shadow: 0 2px 10px rgba(255, 214, 0, 0.3);
     cursor: pointer;
     z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    padding: 0;
+    margin: 0;
 }
 
-body, html {
-    overflow-x: hidden !important;
-}
-
+/* Amaga el comptador de FPS per defecte (tots els modes) */
 #fpsCounter {
     display: none !important;
 }
 
-/* Redueix l'espai sota la fila de botons en mode escriptori */
-.mobile-btn-row {
+/* Redueix l'espai sota la fila de botons (escriptori) */
+.btn-row {
     margin-bottom: -14px;
 }
